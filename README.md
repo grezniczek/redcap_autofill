@@ -32,7 +32,7 @@ Some field types are not supported: Calculated Field, Signature, File Upload, De
 
 Usage:
 
-```JSON
+```JS
 // Simple syntax
 @AUTOFILL-VALUE="5"
 // Use special value syntax for checkbox fields
@@ -59,7 +59,7 @@ Defines the placement of the autofill widget (i.e. a control with buttons for th
 
 Usage:
 
-```JSON
+```JS
 // Simple syntax
 @AUTOFILL-FORM/SURVEY
 @AUTOFILL-FORM/SURVEY="group"
@@ -90,7 +90,7 @@ Determines whether autofill should be performed after saving a form or survey. F
 
 Usage:
 
-```JSON
+```JS
 // Place anywhere in the instrument
 @AUTOFILL-FORM/SURVEY-ONSAVE
 // Only apply to specific groups
