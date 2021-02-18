@@ -1,3 +1,5 @@
+**Warning:** Work in progress. This does nothing yet, even though this README looks fancy :p
+
 # Autofill
 
 A REDCap external module providing action tags that allow filling of empty fields with default values.
