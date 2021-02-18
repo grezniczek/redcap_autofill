@@ -1,0 +1,39 @@
+{
+    "name": "Autofill",
+    "tt_name": "module_name",
+    "namespace": "DE\\RUB\\AutofillExternalModule",
+    "description": "A REDCap external module providing action tags that allow filling of empty fields with default values.",
+    "tt_description": "module_desc",
+    "documentation": "README.md",
+    "tt_documentation": "module_docs",
+    "authors": [
+        {
+            "name": "Günther Rezniczek",
+            "email": "guenther.rezniczek@rub.de",
+            "institution": "Ruhr-Universität Bochum"
+        }
+    ],
+    "framework-version": 3,
+    "permissions": [
+        "redcap_data_entry_form",
+        "redcap_survey_page",
+        "redcap_save_record",
+        "redcap_survey_complete"
+    ],
+    "system-settings": [
+    ],
+    "project-settings": [
+        {
+            "key": "javascript-debug",
+            "name": "Output debug information to the browser console",
+            "tt_name": "config_jsdebug",
+            "type": "checkbox"
+        }
+    ],
+    "compatibility": {
+        "php-version-min": "5.6.0",
+        "php-version-max": "",
+        "redcap-version-min": "10.1.0",
+        "redcap-version-max": ""
+     }
+}
