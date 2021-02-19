@@ -16,7 +16,6 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
     private $atSurveyOnSave = "@AUTOFILL-SURVEY-ONSAVE";
 
     private $actionTags;
-    private $renderTags;
 
     function __construct() {
         $this->actionTags = array (
@@ -25,11 +24,6 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
             $this->atSurvey,
             $this->atFormOnSave,
             $this->atSurveyOnSave,
-        );
-        $this->renderTags = array (
-            $this->atValue,
-            $this->atForm,
-            $this->atSurvey,
         );
         parent::__construct();
     }
@@ -190,41 +184,17 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
     }
 
     /**
-     * Include JavaScript files and output basic JavaScript setup
+     * Include JavaScript files and initialize the module
      */
-    function renderJavascriptSetup($project_id = null) {
-        $field_params = $this->getFieldParams();
-
-
-        // Make a list of all fields that may be downloaded
-        $allowed = array_values(array_map(function($e) { 
-            return $e->field; 
-        }, $this->getPipedFields()));
-        $allowed = array_unique(array_merge($allowed, array_keys($field_params)));
-        $debug = $this->getProjectSetting("javascript-debug") == true;
-        // Security token - needed to perform safe piping
-        if ($project_id) {
-            if (!class_exists("\DE\RUB\CryptoHelper")) include_once("classes/CryptoHelper.php");
-            $crypto = \DE\RUB\CryptoHelper\Crypto::init();
-            $payload = $crypto->encrypt(array( 
-                "pid" => $project_id * 1,
-                "allowed" => $allowed
-            ));
-        }
-        else {
-            $payload = "nop";
-        }
-        $payload = urlencode($payload);
+    function renderJavascript($data) {
         ?>
-            <script src="<?php print $this->getUrl('js/pdfobject.min.js'); ?>"></script>
-            <script src="<?php print $this->getUrl('js/imageViewer.js'); ?>"></script>
+            <script src="<?php print $this->getUrl('js/autofill.js'); ?>"></script>
             <script>
-                IVEM.valid_image_suffixes = <?php print json_encode($this->valid_image_suffixes) ?>;
-                IVEM.valid_pdf_suffixes = <?php print json_encode($this->valid_pdf_suffixes) ?>;
-                IVEM.field_params = <?php print json_encode($field_params) ?>;
-                IVEM.payload = <?php print json_encode($payload) ?>;
-                IVEM.debug = <?php print json_encode($debug) ?>;
-                IVEM.log("Initialized IVEM", IVEM);
+                DE_RUB_AutofillEM.data = <?php print json_encode($data) ?>;
+                DE_RUB_AutofillEM.log("Initialized AUTOFILL", DE_RUB_AutofillEM);
+                $(function() {
+                    DE_RUB_AutofillEM.init();
+                });
             </script>
         <?php
     }
@@ -262,24 +232,27 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
 
         $field_params = $this->getFieldParams();
 
-        // Filter the configured fields to only those on the current instrument / survey page
+        // Filter the tags and configured fields to only those on the current instrument / survey page
         $fields = array(); 
+        $tags = array ( $this->atValue );
         // Survey
         if ($is_survey) {
             $question_by_section = $Proj->surveys[$Proj->forms[$instrument]['survey_id']]['question_by_section'];
             $current_page = $question_by_section == "1" ? $_GET["__page__"]  : 1;
             list ($pageFields, $totalPages) = Survey::getPageFields($instrument, $question_by_section);
             $fields = $pageFields[$current_page];
+            array_push($tags, $this->atSurvey);
         }
         // Data entry
         else {
             $fields = REDCap::getFieldNames($instrument);
+            array_push($tags, $this->atForm);
         }
         // Filter for active fields only and count
         $active_widgets = 0;
         $active_autofills = 0;
-        $active_field_params = array();
-        foreach ($this->renderTags as $tag) {
+        $active_fields = array();
+        foreach ($tags as $tag) {
             foreach ($fields as $field_name) {
                 if (isset($field_params[$tag][$field_name])) {
                     $active_fields[$tag][$field_name] = $field_params[$tag][$field_name];
@@ -302,100 +275,22 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
         $project = new Project($this->framework, $project_id);
         $debug = $this->getProjectSetting("javascript-debug") == true;
 
-        return;
-
-        // We need to know the filetype to validate when the file has been previously uploaded...
-        // Get type of field
-        global $Proj;
-        $query_fields = array();
-        foreach (array_keys($fields) as $field) {
-            $query_fields[$field] = array(
-                "field" => $field, 
-                "event_id" => $event_id * 1, 
-                "instance" => $instance * 1
-            );
-        }
-        foreach ($piped_fields as $field => $source) {
-            $source_event = $source["event"] === null ? $event_id : $source["event"];
-            $query_fields[$field] = array (
-                "field" => $source["field"], 
-                "event_id" => is_numeric($source_event) ? $source_event * 1 : Event::getEventIdByName($project_id, $source_event),
-                "instance" => $source["instance"] * 1 ?: 1
-            );
-        }
-        // Get field data - how to get this depends on the data structure of the project (repeating forms/events)
-        $field_data = array();
-        foreach ($query_fields as $field => $source) {
-            $sourceField = $source["field"];
-            $sourceForm = $project->getFormByField($sourceField);
-            $sourceEventId = $source["event_id"];
-            $sourceInstance = $source["instance"];
-            $data = REDCap::getData('array',$record, $sourceField);
-            if ($project->isFieldOnRepeatingForm($sourceField, $sourceEventId)) {
-                $result = $data[$record]["repeat_instances"][$sourceEventId][$sourceForm][$sourceInstance];
-            }
-            else if ($project->isEventRepeating($sourceEventId)) {
-                $result = $data[$record]["repeat_instances"][$sourceEventId][null][$sourceInstance];
-            }
-            else {
-                $result = $data[$record][$sourceEventId];
-            }
-            //Util::log($result);
-            $field_meta = $Proj->metadata[$sourceField];
-            $field_type = $field_meta['element_type'];
-            if ($field_type == 'descriptive' && !empty($field_meta['edoc_id'])) {
-                $doc_id = $field_meta['edoc_id'];
-            } 
-            elseif ($field_type == 'file') {
-                $doc_id = $result[$sourceField];
-            } 
-            else {
-                // invalid field type!
-            }
-            $field_data[$field] = array (
-                'container_id' => "ivem-$field-$event_id-$instance",
-                'params'       => $source_fields[$source["field"]],
-                'page'         => $instrument,
-                'field_name'   => $sourceField,
-                'record'       => $record,
-                'event_id'     => $sourceEventId,
-                'instance'     => $sourceInstance,
-                'survey_hash'  => $survey_hash,
-                'pipe_source'  => "$sourceField-$sourceEventId-$sourceInstance",
-            );
-            if ($doc_id > 0) {
-                list($mime_type, $doc_name) = Files::getEdocContentsAttributes($doc_id);
-                $field_data[$field]["suffix"] = strtolower(pathinfo($doc_name, PATHINFO_EXTENSION));
-                $field_data[$field]["mime_type"] = $mime_type;
-                $field_data[$field]["doc_name"] = $doc_name;
-                $field_data[$field]["doc_id"] = $doc_id;
-                $field_data[$field]["hash"] = Files::docIdHash($doc_id);
-            }
+        // Augement autofill fields with some metadata (field type, ...)
+        foreach ($active_fields[$this->atValue] as $field_name => &$data) {
+            $fmd = $project->getFieldMetadata($field_name);
+            $data["autofills"] = count($data);
+            $data["type"] = $fmd["element_type"];
+            $data["validation"] = $fmd["element_validation_type"];
         }
 
-        $preview_fields = array();
-        foreach ($fields as $field => $_) {
-            $preview_fields[$field] = $field_data[$field];
-            $preview_fields[$field]["piped"] = false;
-        }
-        $pipe_sources = array();
-        foreach ($piped_fields as $into => $from) {
-            $pipe_sources[$from["field"]] = true;
-            $preview_fields[$into] = $field_data[$into];
-            $preview_fields[$into]["piped"] = true;
-            $preview_fields[$into]["params"] = isset($active_field_params[$into]) ? $active_field_params[$into] : @$active_field_params[$from];
-        }
+        $js_data = array (
+            "debug" => $debug,
+            "atValue" => $this->atValue,
+            "atWidget" => $is_survey ? $this->atSurvey : $this->atForm,
+            "data" => $active_fields
+        );
 
-
-        $this->renderJavascriptSetup($project_id);
-        ?>
-            <script>
-                // Load the fields and parameters and start it up
-                IVEM.preview_fields = <?php print json_encode($preview_fields) ?>;
-                IVEM.pipe_sources = <?php print json_encode($pipe_sources) ?>;
-                IVEM.init();
-            </script>
-        <?php
+        $this->renderJavascript($js_data);
     }
 
     #endregion --------------------------------------------------------------------------------------------------------------
