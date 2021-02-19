@@ -139,8 +139,19 @@ DE_RUB_AutofillEM.autofill = function(groups, mode) {
             case 'checkbox': 
                 break;
             case 'radio':
+                // @ts-ignore
+                radioResetVal(afv.field, 'form');
+                setTimeout(function() {
+                    $el = $('input[type=radio][value="' + afv.value + '"]');
+                    $el.trigger('click');
+                }, 10)
                 break;
             case 'select':
+            case 'sql':
+                $el = $('select[name=' + afv.field + ']');
+                if (afv.overwrite || $el.val().toString().length == 0) {
+                    $el.val(afv.value);
+                }
                 break;
             case 'textarea':
                 $el = $('textarea[name=' + afv.field + ']');
@@ -149,8 +160,8 @@ DE_RUB_AutofillEM.autofill = function(groups, mode) {
                 }
                 break;
             case 'slider':
-                break;
-            case 'sql':
+                // @ts-ignore
+                setSlider(afv.field, afv.value);
                 break;
             default:
                 $el = $('input[name=' + afv.field + ']');
@@ -159,11 +170,41 @@ DE_RUB_AutofillEM.autofill = function(groups, mode) {
                 }
                 break;
         }
+        // @ts-ignore
+        doBranching(afv.field);
     }
     
     function clear(/** @type AutofillValue */ afv, /** @type FieldInfo */ fi) {
         DE_RUB_AutofillEM.log('Clearing field ' + afv.field)
-
+        /** @type JQuery */
+        var $el;
+        switch (fi.type) {
+            case 'checkbox': 
+                break;
+            case 'radio':
+                // @ts-ignore
+                radioResetVal(afv.field, 'form');
+                break;
+            case 'sql':
+            case 'select':
+                $el = $('select[name=' + afv.field + ']');
+                $el.val('');
+                break;
+            case 'textarea':
+                $el = $('textarea[name=' + afv.field + ']');
+                $el.val('');
+                break;
+            case 'slider':
+                // @ts-ignore
+                resetSlider(afv.field, false);
+                break;
+            default:
+                $el = $('input[name=' + afv.field + ']');
+                $el.val('');
+                break;
+        }
+        // @ts-ignore
+        doBranching(afv.field);
     }
 
     Object.keys(DE_RUB_AutofillEM.params.fields).forEach(function(field) {
