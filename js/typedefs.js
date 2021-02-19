@@ -13,6 +13,7 @@
  * @typedef AutofillData
  * @type {{
  * debug: boolean
+ * survey: boolean
  * atValue: string
  * atWidget: string
  * }}

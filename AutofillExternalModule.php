@@ -284,6 +284,7 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
 
         $js_data = array (
             "debug" => $debug,
+            "survey" => $is_survey,
             "atValue" => $this->atValue,
             "atWidget" => $is_survey ? $this->atSurvey : $this->atForm,
             "data" => $active_fields
