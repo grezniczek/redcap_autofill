@@ -10,7 +10,7 @@ var DE_RUB_AutofillEM = DE_RUB_AutofillEM || {};
 
 // Debug logging
 DE_RUB_AutofillEM.log = function() {
-    if (DE_RUB_AutofillEM.data.debug) {
+    if (DE_RUB_AutofillEM.params.debug) {
         switch(arguments.length) {
             case 1: 
                 console.log(arguments[0]); 
@@ -35,8 +35,8 @@ DE_RUB_AutofillEM.init = function() {
 
     DE_RUB_AutofillEM.log("Autofill EM - Initializing", DE_RUB_AutofillEM);
 
-    // TODO
     // Add widgets
+
 
 };
 

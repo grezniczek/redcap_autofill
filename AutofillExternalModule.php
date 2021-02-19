@@ -184,21 +184,6 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
     }
 
     /**
-     * Include JavaScript files and initialize the module
-     */
-    function renderJavascript($data) {
-        ?>
-            <script src="<?php print $this->getUrl('js/autofill.js'); ?>"></script>
-            <script>
-                DE_RUB_AutofillEM.data = <?php print json_encode($data) ?>;
-                $(function() {
-                    DE_RUB_AutofillEM.init();
-                });
-            </script>
-        <?php
-    }
-
-    /**
      * This function passess along details about existing uploaded files so they can be previewed immediately after the
      * page is rendered or displayed when piped with the @IMAGEPIPE action-tag
      * @param $project_id
@@ -282,16 +267,31 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
             $data["validation"] = $fmd["element_validation_type"];
         }
 
-        $js_data = array (
+        $js_params = array (
             "debug" => $debug,
             "survey" => $is_survey,
-            "atValue" => $this->atValue,
-            "atWidget" => $is_survey ? $this->atSurvey : $this->atForm,
-            "data" => $active_fields
+            "fields" => $active_fields[$this->atValue],
+            "widgets" => $active_fields[$is_survey ? $this->atSurvey : $this->atForm],
         );
 
-        $this->renderJavascript($js_data);
+        $this->renderJavascript($js_params);
     }
+
+    /**
+     * Include JavaScript files and initialize the module
+     */
+    function renderJavascript($params) {
+        ?>
+            <script src="<?php print $this->getUrl('js/autofill.js'); ?>"></script>
+            <script>
+                DE_RUB_AutofillEM.params = <?php print json_encode($params) ?>;
+                $(function() {
+                    DE_RUB_AutofillEM.init();
+                });
+            </script>
+        <?php
+    }
+
 
     #endregion --------------------------------------------------------------------------------------------------------------
 

@@ -1,7 +1,7 @@
 /**
  * @typedef AutofillEM
  * @type {{
- *  data?: AutofillData
+ *  params?: AutofillParams
  *  log: functiion()
  *  init: function()
  *  autofill: function(string[])
@@ -10,12 +10,12 @@
  */
 
 /**
- * @typedef AutofillData
+ * @typedef AutofillParams
  * @type {{
  * debug: boolean
  * survey: boolean
- * atValue: string
- * atWidget: string
+ * fields: object
+ * widgets: object
  * }}
  */
 
