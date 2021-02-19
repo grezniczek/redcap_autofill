@@ -69,70 +69,101 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
                 $params = array ();
                 foreach ($param_array as $raw_param) {
                     $param = json_decode($raw_param, true);
-                    // Convert non-json parameters to corresponding array
-                    if (!is_array($param)) {
+                    if ($param === NULL) {
+                        $param = array(
+                            "error" => $this->tt("invalid_parameters", $field),
+                            "target" => "",
+                        );
+                    }
+                    else {
+                        // Convert non-json parameters to corresponding array
+                        if (!is_array($param)) {
+                            switch($tag) {
+                                case $this->atValue:
+                                    $param = array (
+                                        "value" => $param,
+                                    );
+                                    break;
+                                case $this->atForm:
+                                case $this->atSurvey:
+                                    list($groups, $id) = explode(":", $param, 2);
+                                    $param = array (
+                                        "groups" => explode(",", $groups),
+                                        "target" => $id,
+                                    );
+                                    break;
+                                case $this->atFormOnSave:
+                                case $this->atSurveyOnSave:
+                                    $param = array (
+                                        "groups" => explode(",", $param),
+                                    );
+                                    break;
+                            }
+                        }
+                        // Complete parameters with defaults
+                        $param["field"] = $field;
+                        $param["error"] = "";
                         switch($tag) {
                             case $this->atValue:
-                                $param = array (
-                                    "value" => $raw_param,
-                                );
+                                if (!isset($param["value"])) {
+                                    $param["value"] = NULL;
+                                }
+                                if (!isset($param["group"])) {
+                                    $param["group"] = "";
+                                }
+                                if (!isset($param["overwrite"])) {
+                                    $param["overwrite"] = false;
+                                }
                                 break;
                             case $this->atForm:
                             case $this->atSurvey:
-                                list($groups, $id) = explode(":", $raw_param, 2);
-                                $param = array (
-                                    "groups" => explode(",", $groups),
-                                    "target" => $id,
-                                );
+                                if (!isset($param["groups"])) {
+                                    $param["groups"] = array();
+                                }
+                                if (!isset($param["target"])) {
+                                    $param["target"] = "";
+                                }
+                                if (!isset($param["autofill"])) {
+                                    $param["autofill"] = true;
+                                }
+                                if (!isset($param["autofillLabel"])) {
+                                    $param["autofillLabel"] = $this->tt("widget_autofilllabel");
+                                }
+                                if (!isset($param["autofillStyle"])) {
+                                    $param["autofillStyle"] = "";
+                                }
+                                if (!isset($param["autofillClass"])) {
+                                    $param["autofillClass"] = "";
+                                }
+                                if (!isset($param["clear"])) {
+                                    $param["clear"] = false;
+                                }
+                                if (!isset($param["clearLabel"])) {
+                                    $param["clearLabel"] = $this->tt("widget_clearlabel");
+                                }
+                                if (!isset($param["clearStyle"])) {
+                                    $param["clearStyle"] = "";
+                                }
+                                if (!isset($param["clearClass"])) {
+                                    $param["clearClass"] = "";
+                                }
+                                if (!isset($param["delimiter"])) {
+                                    $param["delimiter"] = " ";
+                                }
+                                if (!isset($param["before"])) {
+                                    $param["before"] = " ";
+                                }
+                                if (!isset($param["after"])) {
+                                    $param["after"] = " ";
+                                }
                                 break;
                             case $this->atFormOnSave:
                             case $this->atSurveyOnSave:
-                                $param = array (
-                                    "groups" => explode(",", $raw_param),
-                                );
+                                if (!isset($param["groups"])) {
+                                    $param["groups"] = array();
+                                }
                                 break;
                         }
-                    }
-                    // Complete parameters with defaults
-                    switch($tag) {
-                        case $this->atValue:
-                            if (!isset($param["value"])) {
-                                $param["value"] = NULL;
-                            }
-                            if (!isset($param["group"])) {
-                                $param["group"] = "";
-                            }
-                            if (!isset($param["overwrite"])) {
-                                $param["overwrite"] = false;
-                            }
-                            break;
-                        case $this->atForm:
-                        case $this->atSurvey:
-                            if (!isset($param["groups"])) {
-                                $param["groups"] = array();
-                            }
-                            if (!isset($param["target"])) {
-                                $param["target"] = "";
-                            }
-                            if (!isset($param["autofill"])) {
-                                $param["autofill"] = true;
-                            }
-                            if (!isset($param["autofillLabel"])) {
-                                $param["autofillLabel"] = $this->tt("widget_autofilllabel");
-                            }
-                            if (!isset($param["clear"])) {
-                                $param["clear"] = false;
-                            }
-                            if (!isset($param["clearLabel"])) {
-                                $param["clearLabel"] = $this->tt("widget_clearlabel");
-                            }
-                            break;
-                        case $this->atFormOnSave:
-                        case $this->atSurveyOnSave:
-                            if (!isset($param["groups"])) {
-                                $param["groups"] = array();
-                            }
-                            break;
                     }
                     $params[] = $param;
                 }
@@ -142,46 +173,6 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
         return $field_params;
     }
 
-    /**
-     * Returns an array containing piped fields (@IMAGEPIPE action-tag). This needs context in order to find the correct 
-     * source field.
-     * @param $project_id
-     * @param $instrument
-     * @param $record
-     * @param $event_id
-     * @param $instance
-     * @return array
-     */
-    function getPipedFields($project_id = null, $instrument = null, $record = null, $event_id = null, $instance = 1) {
-        // Get from action tags (and only take if not specified in external module settings)
-        if (!class_exists("ActionTagHelper")) include_once("classes/ActionTagHelper.php");
-
-        if (!class_exists("\DE\RUB\AutofillExternalModule\Project")) include_once ("classes/Project.php");
-        $project = new Project($this->framework, $project_id ?: $this->framework->getProjectId());
-
-        $field_params = array();
-
-        $action_tag_results = ActionTagHelper::getActionTags($this->imagePipeTag);
-        if (isset($action_tag_results[$this->imagePipeTag])) {
-            foreach ($action_tag_results[$this->imagePipeTag] as $field => $param_array) {
-                $params = $param_array["params"];
-                // Need to create correct context for the piping of special tags (instance, event smart variables)
-                $raw_params = json_decode($params, true);
-                if (is_string($raw_params)) {
-                    $raw_params = json_decode("{\"field\":\"$raw_params\",\"event\":\"[event-name]\",\"instance\":\"[current-instance]\"}", true);
-                }
-                if (!isset($raw_params["event"])) $raw_params["event"] = "[event-name]";
-                if (!isset($raw_params["instance"])) $raw_params["instance"] = "[current-instance]";
-                $field_instrument = $project->getFormByField($raw_params["field"]);
-                $raw_params["event"] = Piping::pipeSpecialTags($raw_params["event"] ?: "[event-name]", $project_id, $record, $event_id, $instance, null, false, null, $field_instrument, false, false);
-                $ctx_event_id = is_numeric($raw_params["event"]) ? $raw_params["event"] * 1 : Event::getEventIdByName($project_id, $raw_params["event"]);
-                $ctx_instance = $ctx_event_id == $event_id ? $instance : 1;
-                $raw_params["instance"] = Piping::pipeSpecialTags($raw_params["instance"] ?: "[current-instance]", $project_id, $record, $ctx_event_id, $ctx_instance, null, false, null, $field_instrument, false, false);
-                $field_params[$field] = $raw_params;
-            }
-        }
-        return $field_params;
-    }
 
     /**
      * This function passess along details about existing uploaded files so they can be previewed immediately after the
@@ -260,11 +251,13 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
         $debug = $this->getProjectSetting("javascript-debug") == true;
 
         // Augement autofill fields with some metadata (field type, ...)
-        foreach ($active_fields[$this->atValue] as $field_name => &$data) {
-            $fmd = $project->getFieldMetadata($field_name);
-            $data["autofills"] = count($data);
-            $data["type"] = $fmd["element_type"];
-            $data["validation"] = $fmd["element_validation_type"];
+        foreach ($active_fields as $tag => &$field_info) {
+            foreach ($field_info as $field_name => &$data) {
+                $fmd = $project->getFieldMetadata($field_name);
+                $data["autofills"] = count($data);
+                $data["type"] = $fmd["element_type"];
+                $data["validation"] = $fmd["element_validation_type"];
+            }
         }
 
         $js_params = array (

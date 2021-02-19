@@ -75,7 +75,9 @@ Usage:
   'autofill': true|false,
   'autofillLabel': 'Autofill',
   'clear': true|false,
-  'clearLabel': 'Reset'
+  'clearLabel': 'Reset',
+  'clearStyle': 'background-color:red;',
+  'delimiter': ' '
 }
 ```
 
@@ -85,8 +87,15 @@ Extended parameters:
 - `target`: When specified, the widget is rendered as last child of the element with the given id - _optional_ (default render position is at the end of the label portion of the field with the action tag).
 - `autofill`: When set to `true`adds an autofill button that will execute the autofill - _optional_ (default: `true`).
 - `autofillLabel`: The label of the button (supports HTML) - _optional_ (default: Autofill empty values).
+- `autofillStyle`: CSS Style that is output in the button's style attribute - _optional_ (default: empty).
+- `autofillClass`: Class names (space-delimited) to be added to the button - _optional_ (default: empty).
 - `clear`: When set to `true` adds a clear button that will reset all affected fields - _optional_ (default: `false`).
 - `clearLabel`: The label of the clear button (supports HTML) - _optional_ (default: Clear values).
+- `clearStyle`: CSS Style that is output in the button's style attribute - _optional_ (default: empty).
+- `clearClass`: Class names (space-delimited) to be added to the button - _optional_ (default: empty).
+- `delimiter`: The delimiter between the autofill and clear buttons (supports HTML) - _optional_ (default: space).
+- `before`: This is output before the autofill button (supports HTML) - _optional_ (default: empty).
+- `after`: This is output after the autofill button (supports HTML) - _optional_ (default: empty).
 
 ### @AUTOFILL-FORM-ONSAVE and @AUTOFILL-SURVEY-ONSAVE
 
