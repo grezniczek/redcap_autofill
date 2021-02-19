@@ -33,6 +33,8 @@ DE_RUB_AutofillEM.log = function() {
 // Initialization (set up widgets)
 DE_RUB_AutofillEM.init = function() {
 
+    DE_RUB_AutofillEM.log("Autofill EM - Initializing", DE_RUB_AutofillEM);
+
     // TODO
     // Add widgets
 

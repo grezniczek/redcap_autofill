@@ -191,7 +191,6 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
             <script src="<?php print $this->getUrl('js/autofill.js'); ?>"></script>
             <script>
                 DE_RUB_AutofillEM.data = <?php print json_encode($data) ?>;
-                DE_RUB_AutofillEM.log("Initialized AUTOFILL", DE_RUB_AutofillEM);
                 $(function() {
                     DE_RUB_AutofillEM.init();
                 });
