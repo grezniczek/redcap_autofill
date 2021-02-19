@@ -249,6 +249,7 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
         if (!class_exists("\DE\RUB\AutofillExternalModule\Project")) include_once ("classes/Project.php");
         $project = new Project($this->framework, $project_id);
         $debug = $this->getProjectSetting("javascript-debug") == true;
+        $show_errors = $this->getProjectSetting("show-errors") == true;
 
         // Augement autofill fields with some metadata (field type, ...)
         foreach ($active_fields as $tag => &$field_info) {
@@ -262,6 +263,7 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
 
         $js_params = array (
             "debug" => $debug,
+            "errors" => $show_errors,
             "survey" => $is_survey,
             "fields" => $active_fields[$this->atValue],
             "widgets" => $active_fields[$is_survey ? $this->atSurvey : $this->atForm],

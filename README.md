@@ -23,7 +23,12 @@ Manual installation:
 
 ## Configuration and Effects
 
-Debug information can be output to the browser's console by enabling the `JavaScript Debug` option. All other effects of this module are controlled by action tags.
+- Debug information can be output to the browser's console by enabling the JavaScript Debug option.
+- Erros encountered during action tag parameter parsing can be indicated on data entry and survey pages.
+
+Enable these **only** during testing!
+
+All other effects of this module are controlled by action tags.
 
 ## Action Tags
 

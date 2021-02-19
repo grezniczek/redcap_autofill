@@ -28,6 +28,12 @@
             "name": "Output debug information to the browser console",
             "tt_name": "config_jsdebug",
             "type": "checkbox"
+        },
+        {
+            "key": "show-errors",
+            "name": "Show autofill configuration errors on data entry and survey pages",
+            "tt_name": "config_errors",
+            "type": "checkbox"
         }
     ],
     "compatibility": {

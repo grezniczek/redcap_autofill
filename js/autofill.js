@@ -35,6 +35,12 @@ DE_RUB_AutofillEM.init = function() {
 
     DE_RUB_AutofillEM.log("Autofill EM - Initializing", DE_RUB_AutofillEM);
 
+    function getError(/** @type string */ msg) {
+        return DE_RUB_AutofillEM.params.errors ?
+            '<div style="background-color:red;color:white;padding:0.5em;float:left;">' + msg + '</div>' :
+            '';
+    }
+
     // Helper function to create widgets
     function create(
         /** @type AutofillWidget */ widget, 
@@ -44,7 +50,7 @@ DE_RUB_AutofillEM.init = function() {
         DE_RUB_AutofillEM.log('  in target', $t);
         var html = '';
         if (widget.error.length) {
-            html = '<div style="background-color:red;color:white;padding:0.5em;float:left;">' + widget.error + '</div>';
+            html = getError(widget.error);
         }
         else {
             html += widget.before;
@@ -59,18 +65,20 @@ DE_RUB_AutofillEM.init = function() {
             }
             html += widget.after;
         }
-        var $widget = $.parseHTML(html);
-        $t.append($widget);
-        $t.find('[data-autofill-em=autofill').on('click', function(e) {
-            DE_RUB_AutofillEM.clear(widget.groups);
-            e.preventDefault();
-            return false;
-        });
-        $t.find('[data-autofill-em=clear').on('click', function(e) {
-            DE_RUB_AutofillEM.autofill(widget.groups);
-            e.preventDefault();
-            return false;
-        });
+        if (html.length) {
+            var $widget = $.parseHTML(html);
+            $t.append($widget);
+            $t.find('[data-autofill-em=autofill').on('click', function(e) {
+                DE_RUB_AutofillEM.autofill(widget.groups, 'fill');
+                e.preventDefault();
+                return false;
+            });
+            $t.find('[data-autofill-em=clear').on('click', function(e) {
+                DE_RUB_AutofillEM.autofill(widget.groups, 'clear');
+                e.preventDefault();
+                return false;
+            });
+        }
     }
 
     // Add widgets
@@ -103,14 +111,76 @@ DE_RUB_AutofillEM.init = function() {
             create(widget, $target);
         }
     });
+
+    // Check autofills for errors
+    Object.keys(DE_RUB_AutofillEM.params.fields).forEach(function(field) {
+        var $t = $('td.labelrc').first();
+        /** @type FieldInfo */
+        var fi = DE_RUB_AutofillEM.params.fields[field];
+        for (var i = 0; i < fi.autofills; i++) {
+            /** @type AutofillValue */
+            var afv = fi[i];
+            if (afv.error.length) {
+                $t.append($(getError(afv.error)));
+            }
+        }
+    });
 };
 
 // Autofill fields
-DE_RUB_AutofillEM.autofill = function(groups) {
+DE_RUB_AutofillEM.autofill = function(groups, mode) {
     DE_RUB_AutofillEM.log('Autofilling groups', groups)
+
+    function set(/** @type AutofillValue */ afv, /** @type FieldInfo */ fi) {
+        DE_RUB_AutofillEM.log((afv.overwrite ? 'Overwriting' : 'Autofilling') + ' field ' + afv.field + ' with value ' + afv.value)
+        /** @type JQuery */
+        var $el;
+        switch (fi.type) {
+            case 'checkbox': 
+                break;
+            case 'radio':
+                break;
+            case 'select':
+                break;
+            case 'textarea':
+                $el = $('textarea[name=' + afv.field + ']');
+                if (afv.overwrite || $el.val().toString().length == 0) {
+                    $el.val(afv.value);
+                }
+                break;
+            case 'slider':
+                break;
+            case 'sql':
+                break;
+            default:
+                $el = $('input[name=' + afv.field + ']');
+                if (afv.overwrite || $el.val().toString().length == 0) {
+                    $el.val(afv.value);
+                }
+                break;
+        }
+    }
+    
+    function clear(/** @type AutofillValue */ afv, /** @type FieldInfo */ fi) {
+        DE_RUB_AutofillEM.log('Clearing field ' + afv.field)
+
+    }
+
+    Object.keys(DE_RUB_AutofillEM.params.fields).forEach(function(field) {
+        /** @type FieldInfo */
+        var fi = DE_RUB_AutofillEM.params.fields[field];
+        for (var i = 0; i < fi.autofills; i++) {
+            /** @type AutofillValue */
+            var afv = DE_RUB_AutofillEM.params.fields[field][i];
+            if (groups.includes(afv.group)) {
+                if (mode == 'clear') {
+                    clear(afv, fi);
+                }
+                else {
+                    set(afv, fi);
+                }
+            }
+        }
+    });
 };
 
-// Clear autofill fields
-DE_RUB_AutofillEM.clear = function(groups) {
-    DE_RUB_AutofillEM.log('Clearing groups', groups)
-};
