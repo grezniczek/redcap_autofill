@@ -1,5 +1,3 @@
-**Warning:** Work in progress. This does nothing yet, even though this README looks fancy :p
-
 # Autofill
 
 A REDCap external module providing action tags that allow filling of empty fields with default values.
@@ -104,6 +102,8 @@ Extended parameters:
 
 ### @AUTOFILL-FORM-ONSAVE and @AUTOFILL-SURVEY-ONSAVE
 
+_Not implemented yet!_
+
 Determines whether autofill should be performed after saving a form or survey. For multi-page surveys, this will only apply after the final submission, and not for each page. An additional event will be logged specifying which fields were set through autofill.
 
 Usage:
@@ -118,7 +118,6 @@ Usage:
   'groups': [ 'group' ]
 }
 ```
-
 
 ## Changelog
 
