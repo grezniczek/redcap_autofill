@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ODM xmlns="http://www.cdisc.org/ns/odm/v1.3" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:redcap="https://projectredcap.org" xsi:schemaLocation="http://www.cdisc.org/ns/odm/v1.3 schema/odm/ODM1-3-1.xsd" ODMVersion="1.3.1" FileOID="000-00-0000" FileType="Snapshot" Description="EM - Autofill" AsOfDateTime="2021-02-19T19:44:01" CreationDateTime="2021-02-19T19:44:01" SourceSystem="REDCap" SourceSystemVersion="10.8.2">
+<Study OID="Project.EMAutofill">
+<GlobalVariables>
+	<StudyName>EM - Autofill</StudyName>
+	<StudyDescription>This file contains the metadata, events, and data for REDCap project "EM - Autofill".</StudyDescription>
+	<ProtocolName>EM - Autofill</ProtocolName>
+	<redcap:RecordAutonumberingEnabled>1</redcap:RecordAutonumberingEnabled>
+	<redcap:CustomRecordLabel></redcap:CustomRecordLabel>
+	<redcap:SecondaryUniqueField></redcap:SecondaryUniqueField>
+	<redcap:SchedulingEnabled>0</redcap:SchedulingEnabled>
+	<redcap:SurveysEnabled>1</redcap:SurveysEnabled>
+	<redcap:SurveyInvitationEmailField></redcap:SurveyInvitationEmailField>
+	<redcap:Purpose>0</redcap:Purpose>
+	<redcap:PurposeOther></redcap:PurposeOther>
+	<redcap:ProjectNotes></redcap:ProjectNotes>
+	<redcap:MissingDataCodes>UNK, Unknown</redcap:MissingDataCodes>
+	<redcap:SurveysGroup>
+		<redcap:Surveys form_name="form_1" title="Form 1" instructions="&lt;p&gt;&lt;strong&gt;Please complete the survey below.&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Thank you!&lt;/p&gt;" acknowledgement="&lt;p&gt;&lt;strong&gt;Thank you for taking the survey.&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Have a nice day!&lt;/p&gt;" question_by_section="0" display_page_number="0" question_auto_numbering="0" survey_enabled="1" save_and_return="0" save_and_return_code_bypass="0" logo="" hide_title="0" view_results="0" min_responses_view_results="10" check_diversity_view_results="0" end_survey_redirect_url="" survey_expiration="" promis_skip_question="0" survey_auth_enabled_single="0" edit_completed_response="0" hide_back_button="0" show_required_field_text="1" confirmation_email_subject="" confirmation_email_content="" confirmation_email_from="" confirmation_email_from_display="" confirmation_email_attach_pdf="0" confirmation_email_attachment="" text_to_speech="0" text_to_speech_language="en" end_survey_redirect_next_survey="0" theme="" text_size="1" font_family="16" theme_text_buttons="" theme_bg_page="" theme_text_title="" theme_bg_title="" theme_text_sectionheader="" theme_bg_sectionheader="" theme_text_question="" theme_bg_question="" enhanced_choices="0" repeat_survey_enabled="0" repeat_survey_btn_text="" repeat_survey_btn_location="HIDDEN" response_limit="" response_limit_include_partials="1" response_limit_custom_text="&lt;p&gt;Thank you for your interest; however, the survey is closed because the maximum number of responses has been reached.&lt;/p&gt;" survey_time_limit_days="" survey_time_limit_hours="" survey_time_limit_minutes="" email_participant_field="" end_of_survey_pdf_download="0" pdf_save_to_field="" pdf_save_to_event_id="" pdf_auto_archive="0" pdf_econsent_version="" pdf_econsent_type="" pdf_econsent_firstname_field="" pdf_econsent_firstname_event_id="" pdf_econsent_lastname_field="" pdf_econsent_lastname_event_id="" pdf_econsent_dob_field="" pdf_econsent_dob_event_id="" pdf_econsent_allow_edit="1" pdf_econsent_signature_field1="" pdf_econsent_signature_field2="" pdf_econsent_signature_field3="" pdf_econsent_signature_field4="" pdf_econsent_signature_field5=""/>
+	</redcap:SurveysGroup>
+</GlobalVariables>
+<MetaDataVersion OID="Metadata.EMAutofill_2021-02-19_1944" Name="EM - Autofill" redcap:RecordIdField="record_id">
+	<FormDef OID="Form.form_1" Name="Form 1" Repeating="No" redcap:FormName="form_1">
+		<ItemGroupRef ItemGroupOID="form_1.record_id" Mandatory="No"/>
+		<ItemGroupRef ItemGroupOID="form_1.dropdown" Mandatory="No"/>
+		<ItemGroupRef ItemGroupOID="form_1.radio" Mandatory="No"/>
+		<ItemGroupRef ItemGroupOID="form_1.textonsave" Mandatory="No"/>
+		<ItemGroupRef ItemGroupOID="form_1.form_1_complete" Mandatory="No"/>
+	</FormDef>
+	<ItemGroupDef OID="form_1.record_id" Name="Form 1" Repeating="No">
+		<ItemRef ItemOID="record_id" Mandatory="No" redcap:Variable="record_id"/>
+		<ItemRef ItemOID="text" Mandatory="No" redcap:Variable="text"/>
+		<ItemRef ItemOID="overwritten" Mandatory="No" redcap:Variable="overwritten"/>
+		<ItemRef ItemOID="notes" Mandatory="No" redcap:Variable="notes"/>
+		<ItemRef ItemOID="date" Mandatory="No" redcap:Variable="date"/>
+		<ItemRef ItemOID="integer" Mandatory="No" redcap:Variable="integer"/>
+		<ItemRef ItemOID="slider" Mandatory="No" redcap:Variable="slider"/>
+		<ItemRef ItemOID="sql" Mandatory="No" redcap:Variable="sql"/>
+		<ItemRef ItemOID="embed" Mandatory="No" redcap:Variable="embed"/>
+		<ItemRef ItemOID="widget_form" Mandatory="No" redcap:Variable="widget_form"/>
+		<ItemRef ItemOID="widget_survey" Mandatory="No" redcap:Variable="widget_survey"/>
+	</ItemGroupDef>
+	<ItemGroupDef OID="form_1.dropdown" Name="Autofill Group 2" Repeating="No">
+		<ItemRef ItemOID="dropdown" Mandatory="No" redcap:Variable="dropdown"/>
+	</ItemGroupDef>
+	<ItemGroupDef OID="form_1.radio" Name="Form 1" Repeating="No">
+		<ItemRef ItemOID="radio" Mandatory="No" redcap:Variable="radio"/>
+		<ItemRef ItemOID="checkbox___one" Mandatory="No" redcap:Variable="checkbox"/>
+		<ItemRef ItemOID="checkbox___2" Mandatory="No" redcap:Variable="checkbox"/>
+		<ItemRef ItemOID="checkbox___3" Mandatory="No" redcap:Variable="checkbox"/>
+		<ItemRef ItemOID="checkbox___four" Mandatory="No" redcap:Variable="checkbox"/>
+	</ItemGroupDef>
+	<ItemGroupDef OID="form_1.textonsave" Name="Autofill Group 3" Repeating="No">
+		<ItemRef ItemOID="textonsave" Mandatory="No" redcap:Variable="textonsave"/>
+	</ItemGroupDef>
+	<ItemGroupDef OID="form_1.form_1_complete" Name="Form Status" Repeating="No">
+		<ItemRef ItemOID="form_1_complete" Mandatory="No" redcap:Variable="form_1_complete"/>
+	</ItemGroupDef>
+	<ItemDef OID="record_id" Name="record_id" DataType="text" Length="999" redcap:Variable="record_id" redcap:FieldType="text" redcap:FieldAnnotation="@AUTOFILL-FORM={
+  &quot;groups&quot;: &quot;on-save,2&quot;,
+  &quot;autofillStyle&quot;: &quot;background-color:red;&quot;,
+  &quot;before&quot;: &quot;Before &quot;,
+  &quot;after&quot;: &quot; after&quot;,
+  &quot;clear&quot;: true
+}">
+		<Question><TranslatedText>Record ID </TranslatedText></Question>
+	</ItemDef>
+	<ItemDef OID="text" Name="text" DataType="text" Length="999" redcap:Variable="text" redcap:FieldType="text" redcap:FieldAnnotation="@AUTOFILL-VALUE=&quot;Some text&quot;
+@AUTOFILL-VALUE={
+  &quot;value&quot;: &quot;Some alternative text&quot;,
+  &quot;group&quot;: &quot;2&quot;,
+  &quot;overwrite&quot;: true
+}">
+		<Question><TranslatedText>Text box</TranslatedText></Question>
+	</ItemDef>
+	<ItemDef OID="overwritten" Name="overwritten" DataType="text" Length="999" redcap:Variable="overwritten" redcap:FieldType="text" redcap:FieldAnnotation="@DEFAULT=&quot;Default value&quot;
+@AUTOFILL-VALUE={
+  &quot;value&quot;: &quot;Overridden value!&quot;,
+  &quot;overwrite&quot;: true
+}">
+		<Question><TranslatedText>Text box - overwrite!</TranslatedText></Question>
+	</ItemDef>
+	<ItemDef OID="notes" Name="notes" DataType="text" Length="999" redcap:Variable="notes" redcap:FieldType="textarea" redcap:FieldAnnotation="@AUTOFILL-VALUE=&quot;Some 
+extended
+text
+spanning
+multiple
+lines&quot;">
+		<Question><TranslatedText>Notes Box</TranslatedText></Question>
+	</ItemDef>
+	<ItemDef OID="date" Name="date" DataType="date" Length="999" redcap:Variable="date" redcap:FieldType="text" redcap:TextValidationType="date_dmy" redcap:FieldAnnotation="@AUTOFILL-VALUE=&quot;22-02-2020&quot;">
+		<Question><TranslatedText>Date</TranslatedText></Question>
+	</ItemDef>
+	<ItemDef OID="integer" Name="integer" DataType="integer" Length="999" redcap:Variable="integer" redcap:FieldType="text" redcap:TextValidationType="int" redcap:CustomAlignment="LV" redcap:FieldAnnotation="@AUTOFILL-VALUE=&quot;2&quot;">
+		<Question><TranslatedText>Integer</TranslatedText></Question>
+	</ItemDef>
+	<ItemDef OID="slider" Name="slider" DataType="integer" Length="999" redcap:Variable="slider" redcap:FieldType="slider" redcap:SliderLabels="0 | 50 | 100" redcap:CustomAlignment="RH" redcap:FieldAnnotation="@AUTOFILL-VALUE=&quot;25&quot;">
+		<Question><TranslatedText>Slider - Autofill = 25</TranslatedText></Question>
+	</ItemDef>
+	<ItemDef OID="sql" Name="sql" DataType="text" Length="1" redcap:Variable="sql" redcap:FieldType="sql" redcap:CustomAlignment="RH" redcap:FieldAnnotation="@AUTOFILL-VALUE=&quot;1&quot;">
+		<Question><TranslatedText>SQL - Autofill = 1</TranslatedText></Question>
+	</ItemDef>
+	<ItemDef OID="embed" Name="embed" DataType="text" Length="999" redcap:Variable="embed" redcap:FieldType="descriptive" redcap:FieldAnnotation="@AUTOFILL-FORM=&quot;:autofill-1&quot;
+@HIDDEN-SURVEY">
+		<Question><TranslatedText>Widget without group: 
+
+Embedded:
+{widget_form}</TranslatedText><redcap:FormattedTranslatedText>Widget without group: &lt;span id=&quot;autofill-1&quot;&gt;&lt;/span&gt;
+
+Embedded:
+{widget_form}</redcap:FormattedTranslatedText></Question>
+	</ItemDef>
+	<ItemDef OID="widget_form" Name="widget_form" DataType="text" Length="999" redcap:Variable="widget_form" redcap:FieldType="descriptive" redcap:FieldAnnotation="@AUTOFILL-FORM={
+  &quot;groups&quot;: [&quot;2&quot;],
+  &quot;autofillLabel&quot;: &quot;Make it happen&quot;,
+  &quot;autofillStyle&quot;: &quot;margin:5px;&quot;,
+  &quot;clear&quot;: true,
+  &quot;clearLabel&quot;: &quot;Start fresh&quot;,
+  &quot;clearStyle&quot;: &quot;margin:5px;&quot;,
+  &quot;delimiter&quot;: &quot;&lt;br /&gt;&quot;
+}">
+		<Question><TranslatedText>Widget for group 2:
+---</TranslatedText></Question>
+	</ItemDef>
+	<ItemDef OID="widget_survey" Name="widget_survey" DataType="text" Length="999" redcap:Variable="widget_survey" redcap:FieldType="descriptive" redcap:FieldAnnotation="@HIDDEN-FORM
+@AUTOFILL-SURVEY={
+  &quot;groups&quot;: [ &quot;&quot;, &quot;2&quot;],
+  &quot;autofillLabel&quot;: &quot;Easy Survey Fill&quot;
+}">
+		<Question><TranslatedText>Widget for all:
+</TranslatedText></Question>
+	</ItemDef>
+	<ItemDef OID="dropdown" Name="dropdown" DataType="text" Length="4" redcap:Variable="dropdown" redcap:FieldType="select" redcap:SectionHeader="Autofill Group 2" redcap:FieldAnnotation="@AUTOFILL-VALUE={&quot;value&quot;:&quot;one&quot;, &quot;group&quot;:&quot;2&quot;}">
+		<Question><TranslatedText>Dropdown - Autofill = one</TranslatedText></Question>
+		<CodeListRef CodeListOID="dropdown.choices"/>
+	</ItemDef>
+	<ItemDef OID="radio" Name="radio" DataType="text" Length="4" redcap:Variable="radio" redcap:FieldType="radio" redcap:FieldAnnotation="@AUTOFILL-VALUE={&quot;value&quot;:&quot;3&quot;, &quot;group&quot;:&quot;2&quot;}">
+		<Question><TranslatedText>Radio - Autofill = 3</TranslatedText></Question>
+		<CodeListRef CodeListOID="radio.choices"/>
+	</ItemDef>
+	<ItemDef OID="checkbox___one" Name="checkbox___one" DataType="boolean" Length="1" redcap:Variable="checkbox" redcap:FieldType="checkbox" redcap:FieldAnnotation="@AUTOFILL-VALUE={&quot;value&quot;:&quot;one,2&quot;, &quot;group&quot;:&quot;2&quot;}">
+		<Question><TranslatedText>Checkbox - Autofill = one,2</TranslatedText></Question>
+		<CodeListRef CodeListOID="checkbox___one.choices"/>
+	</ItemDef>
+	<ItemDef OID="checkbox___2" Name="checkbox___2" DataType="boolean" Length="1" redcap:Variable="checkbox" redcap:FieldType="checkbox" redcap:FieldAnnotation="@AUTOFILL-VALUE={&quot;value&quot;:&quot;one,2&quot;, &quot;group&quot;:&quot;2&quot;}">
+		<Question><TranslatedText>Checkbox - Autofill = one,2</TranslatedText></Question>
+		<CodeListRef CodeListOID="checkbox___2.choices"/>
+	</ItemDef>
+	<ItemDef OID="checkbox___3" Name="checkbox___3" DataType="boolean" Length="1" redcap:Variable="checkbox" redcap:FieldType="checkbox" redcap:FieldAnnotation="@AUTOFILL-VALUE={&quot;value&quot;:&quot;one,2&quot;, &quot;group&quot;:&quot;2&quot;}">
+		<Question><TranslatedText>Checkbox - Autofill = one,2</TranslatedText></Question>
+		<CodeListRef CodeListOID="checkbox___3.choices"/>
+	</ItemDef>
+	<ItemDef OID="checkbox___four" Name="checkbox___four" DataType="boolean" Length="1" redcap:Variable="checkbox" redcap:FieldType="checkbox" redcap:FieldAnnotation="@AUTOFILL-VALUE={&quot;value&quot;:&quot;one,2&quot;, &quot;group&quot;:&quot;2&quot;}">
+		<Question><TranslatedText>Checkbox - Autofill = one,2</TranslatedText></Question>
+		<CodeListRef CodeListOID="checkbox___four.choices"/>
+	</ItemDef>
+	<ItemDef OID="textonsave" Name="textonsave" DataType="text" Length="999" redcap:Variable="textonsave" redcap:FieldType="text" redcap:SectionHeader="Autofill Group 3" redcap:FieldAnnotation="@AUTOFILL-VALUE={&quot;value&quot;: &quot;On Save&quot;, &quot;group&quot;: &quot;on-save&quot;}
+@AUTOFILL-FORM-ONSAVE=&quot;on-save&quot;">
+		<Question><TranslatedText>Text - Autofill on save = On Save</TranslatedText></Question>
+	</ItemDef>
+	<ItemDef OID="form_1_complete" Name="form_1_complete" DataType="text" Length="1" redcap:Variable="form_1_complete" redcap:FieldType="select" redcap:SectionHeader="Form Status">
+		<Question><TranslatedText>Complete?</TranslatedText></Question>
+		<CodeListRef CodeListOID="form_1_complete.choices"/>
+	</ItemDef>
+	<CodeList OID="dropdown.choices" Name="dropdown" DataType="text" redcap:Variable="dropdown">
+		<CodeListItem CodedValue="one"><Decode><TranslatedText>One</TranslatedText></Decode></CodeListItem>
+		<CodeListItem CodedValue="2"><Decode><TranslatedText>Two</TranslatedText></Decode></CodeListItem>
+		<CodeListItem CodedValue="3"><Decode><TranslatedText>3</TranslatedText></Decode></CodeListItem>
+		<CodeListItem CodedValue="four"><Decode><TranslatedText>Vier</TranslatedText></Decode></CodeListItem>
+	</CodeList>
+	<CodeList OID="radio.choices" Name="radio" DataType="text" redcap:Variable="radio">
+		<CodeListItem CodedValue="one"><Decode><TranslatedText>One</TranslatedText></Decode></CodeListItem>
+		<CodeListItem CodedValue="2"><Decode><TranslatedText>Two</TranslatedText></Decode></CodeListItem>
+		<CodeListItem CodedValue="3"><Decode><TranslatedText>3</TranslatedText></Decode></CodeListItem>
+		<CodeListItem CodedValue="four"><Decode><TranslatedText>Vier</TranslatedText></Decode></CodeListItem>
+	</CodeList>
+	<CodeList OID="checkbox___one.choices" Name="checkbox___one" DataType="boolean" redcap:Variable="checkbox" redcap:CheckboxChoices="one, One | 2, Two | 3, 3 | four, Vier">
+		<CodeListItem CodedValue="1"><Decode><TranslatedText>Checked</TranslatedText></Decode></CodeListItem>
+		<CodeListItem CodedValue="0"><Decode><TranslatedText>Unchecked</TranslatedText></Decode></CodeListItem>
+	</CodeList>
+	<CodeList OID="checkbox___2.choices" Name="checkbox___2" DataType="boolean" redcap:Variable="checkbox" redcap:CheckboxChoices="one, One | 2, Two | 3, 3 | four, Vier">
+		<CodeListItem CodedValue="1"><Decode><TranslatedText>Checked</TranslatedText></Decode></CodeListItem>
+		<CodeListItem CodedValue="0"><Decode><TranslatedText>Unchecked</TranslatedText></Decode></CodeListItem>
+	</CodeList>
+	<CodeList OID="checkbox___3.choices" Name="checkbox___3" DataType="boolean" redcap:Variable="checkbox" redcap:CheckboxChoices="one, One | 2, Two | 3, 3 | four, Vier">
+		<CodeListItem CodedValue="1"><Decode><TranslatedText>Checked</TranslatedText></Decode></CodeListItem>
+		<CodeListItem CodedValue="0"><Decode><TranslatedText>Unchecked</TranslatedText></Decode></CodeListItem>
+	</CodeList>
+	<CodeList OID="checkbox___four.choices" Name="checkbox___four" DataType="boolean" redcap:Variable="checkbox" redcap:CheckboxChoices="one, One | 2, Two | 3, 3 | four, Vier">
+		<CodeListItem CodedValue="1"><Decode><TranslatedText>Checked</TranslatedText></Decode></CodeListItem>
+		<CodeListItem CodedValue="0"><Decode><TranslatedText>Unchecked</TranslatedText></Decode></CodeListItem>
+	</CodeList>
+	<CodeList OID="form_1_complete.choices" Name="form_1_complete" DataType="text" redcap:Variable="form_1_complete">
+		<CodeListItem CodedValue="0"><Decode><TranslatedText>Incomplete</TranslatedText></Decode></CodeListItem>
+		<CodeListItem CodedValue="1"><Decode><TranslatedText>Unverified</TranslatedText></Decode></CodeListItem>
+		<CodeListItem CodedValue="2"><Decode><TranslatedText>Complete</TranslatedText></Decode></CodeListItem>
+	</CodeList>
+</MetaDataVersion>
+</Study>
+</ODM>
