@@ -4,8 +4,7 @@
  *  params?: AutofillParams
  *  log: functiion()
  *  init: function()
- *  autofill: function(string[])
- *  clear: function(string[])
+ *  autofill: function(string[], string)
  * }}
  */
 
@@ -13,6 +12,7 @@
  * @typedef AutofillParams
  * @type {{
  * debug: boolean
+ * errors: boolean
  * survey: boolean
  * fields: object
  * widgets: object
