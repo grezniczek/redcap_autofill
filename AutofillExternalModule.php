@@ -1,9 +1,6 @@
 <?php namespace DE\RUB\AutofillExternalModule;
 
 use \REDCap as REDCap;
-use \Files as Files;
-use \Piping as Piping;
-use \Event as Event;
 use \Survey as Survey;
 
 class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
