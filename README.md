@@ -72,7 +72,8 @@ Usage:
 @AUTOFILL-FORM/SURVEY={
   'groups': [ 'group1', 'group2'],
   'target': 'id',
-  'label': 'Autofill',
+  'autofill': true|false,
+  'autofillLabel': 'Autofill',
   'clear': true|false,
   'clearLabel': 'Reset'
 }
@@ -82,8 +83,9 @@ Extended parameters:
 
 - `groups`: An array of group names (must be an array, even for a single group) - _optional_.
 - `target`: When specified, the widget is rendered as last child of the element with the given id - _optional_ (default render position is at the end of the label portion of the field with the action tag).
-- `label`: The label of the button (supports HTML) - _optional_ (default: Autofill empty values).
-- `clear`: When set to `true` adds a clear button that will reset all affected fields.
+- `autofill`: When set to `true`adds an autofill button that will execute the autofill - _optional_ (default: `true`).
+- `autofillLabel`: The label of the button (supports HTML) - _optional_ (default: Autofill empty values).
+- `clear`: When set to `true` adds a clear button that will reset all affected fields - _optional_ (default: `false`).
 - `clearLabel`: The label of the clear button (supports HTML) - _optional_ (default: Clear values).
 
 ### @AUTOFILL-FORM-ONSAVE and @AUTOFILL-SURVEY-ONSAVE

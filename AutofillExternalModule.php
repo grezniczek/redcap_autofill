@@ -120,8 +120,11 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
                             if (!isset($param["target"])) {
                                 $param["target"] = "";
                             }
-                            if (!isset($param["label"])) {
-                                $param["label"] = $this->tt("widget_label");
+                            if (!isset($param["autofill"])) {
+                                $param["autofill"] = true;
+                            }
+                            if (!isset($param["autofillLabel"])) {
+                                $param["autofillLabel"] = $this->tt("widget_autofilllabel");
                             }
                             if (!isset($param["clear"])) {
                                 $param["clear"] = false;
