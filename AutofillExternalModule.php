@@ -69,6 +69,11 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
                 $params = array ();
                 foreach ($param_array as $raw_param) {
                     $param = json_decode($raw_param, true);
+                    if ($param == NULL) {
+                        $raw_param = str_replace("\r", "", $raw_param);
+                        $raw_param = str_replace("\n", "\\n", $raw_param);
+                        $param = json_decode($raw_param);
+                    }
                     if ($param === NULL) {
                         $param = array(
                             "error" => $this->tt("invalid_parameters", $field),
