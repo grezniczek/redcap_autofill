@@ -133,7 +133,13 @@ DE_RUB_AutofillEM.autofill = function(groups, mode) {
 
     function isMDC(/** @type AutofillValue */ afv, /** @type FieldInfo */ fi) {
         var code = $('#' + afv.field + '_MDLabel').attr('code');
-        return code != "";
+        // @ts-ignore
+        if (fi.type == 'checkbox' && window.missing_data_codes.includes(code)) {
+            var mdc = $('input[name="__chk__' + afv.field + '_RC_' + code + '"]').val();
+            return mdc == code;
+        }
+        // @ts-ignore
+        return window.missing_data_codes.includes(code);
     }
 
     function set(/** @type AutofillValue */ afv, /** @type FieldInfo */ fi) {
@@ -143,15 +149,17 @@ DE_RUB_AutofillEM.autofill = function(groups, mode) {
         var current = '';
         switch (fi.type) {
             case 'checkbox':
-                if (isMDC(afv, fi)) {
+                // Clear missing data when overwrite is on
+                if (afv.overwrite && isMDC(afv, fi)) {
                     $('img[name=missingDataButton][fieldname=' + afv.field + ']').trigger('click');
                     $('div[name=MDSetButton][code=""]').trigger('click');
                 }
                 afv.value.split(',').forEach(function(code) {
+                    code = code.trim()
                     $el = $('input[name=__chk__' + afv.field + '_RC_' + code);
                     if ($el.length == 1) {
                         current = $el.val().toString()
-                        if (afv.overwrite || current.length == 0) {
+                        if (current.length == 0) {
                             $('input[type=checkbox][name=__chkn__' + afv.field + '][code="' + code + '"]').trigger('click');
                         }
                     }
@@ -210,6 +218,12 @@ DE_RUB_AutofillEM.autofill = function(groups, mode) {
         }
         switch (fi.type) {
             case 'checkbox':
+                $('input[name="__chkn__' + afv.field + '"]').each(function() {
+                    var code = $(this).attr('code');
+                    if ($('input[name="__chk__' + afv.field + '_RC_' + code + '"]').val() == code) {
+                        $(this).trigger('click');
+                    }
+                })
                 break;
             case 'radio':
                 // @ts-ignore
