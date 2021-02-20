@@ -182,8 +182,11 @@ DE_RUB_AutofillEM.autofill = function(groups, mode) {
                 }
                 break;
             case 'slider':
-                // @ts-ignore
-                setSlider(afv.field, afv.value);
+                $el = $('input[name=' + afv.field + ']');
+                if (afv.overwrite || $el.val().toString().length == 0) {
+                    // @ts-ignore
+                    setSlider(afv.field, afv.value);
+                }
                 break;
             default:
                 $el = $('input[name=' + afv.field + ']');
