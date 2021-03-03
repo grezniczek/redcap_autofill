@@ -112,19 +112,81 @@ DE_RUB_AutofillEM.init = function() {
         }
     });
 
-    // Check autofills for errors
-    Object.keys(DE_RUB_AutofillEM.params.fields).forEach(function(field) {
+    function showError(autofillObject) {
         var $t = $('td.labelrc').first();
-        /** @type FieldInfo */
-        var fi = DE_RUB_AutofillEM.params.fields[field];
-        for (var i = 0; i < fi.autofills; i++) {
-            /** @type AutofillValue */
-            var afv = fi[i];
-            if (afv.error.length) {
-                $t.append($(getError(afv.error)));
+        Object.keys(autofillObject).forEach(function(field) {
+            /** @type FieldInfo */
+            var fi = autofillObject[field];
+            for (var i = 0; i < fi.autofills; i++) {
+                /** @type AutofillValue */
+                var afv = fi[i];
+                if (afv.error.length) {
+                    $t.append($(getError(afv.error)));
+                }
             }
+        });
+    }
+
+    // Check autofills for errors
+    if (DE_RUB_AutofillEM.params.errors) {
+        showError(DE_RUB_AutofillEM.params.fields);
+        showError(DE_RUB_AutofillEM.params.autotab);
+    }
+
+    // Setup autotabs
+    Object.keys(DE_RUB_AutofillEM.params.autotab).forEach(function(field) {
+        /** @type FieldInfo */
+        var fi = DE_RUB_AutofillEM.params.autotab[field];
+        if (fi.type == 'select') {
+            var target = fi[0].target;
+            $('select[name="' + field + '"]').on('change', function(e) {
+                if ($(e.currentTarget).val() != "") {
+                    var focusTo = null;
+                    if (target == '') {
+                        var els = $('[aria-labelledby]');
+                        var next = false;
+                        for (var i = 0; i < els.length; i++) {
+                            if (next) {
+                                focusTo = els[i];
+                                break;
+                            }
+                            next = els[i].getAttribute('aria-labelledby') == ('label-' + field);
+                        }
+                    }
+                    else if (target.startsWith(':')) {
+                        focusTo = $(target.substring(1))[0];
+                    }
+                    else {
+                        focusTo = $('[aria-labelledby="label-' + target + '"]')[0];
+                    }
+                    if (focusTo) {
+                        console.log($(focusTo));
+                        focusTo.focus();
+                    }
+                }
+            })
         }
     });
+
+    // Setup nextfocus
+    Object.keys(DE_RUB_AutofillEM.params.nextfocus).forEach(function(field) {
+        /** @type FieldInfo */
+        var fi = DE_RUB_AutofillEM.params.nextfocus[field];
+        var target = fi[0].target;
+        var focusTo = null;
+        $('[aria-labelledby="label-' + field + '"]').on('blur', function() {
+            if (target.startsWith(':')) {
+                focusTo = $(target.substring(1))[0];
+            }
+            else {
+                focusTo = $('[aria-labelledby="label-' + target + '"]')[0];
+            }
+            if (focusTo) {
+                console.log($(focusTo));
+                focusTo.focus();
+            }
+        });
+    });    
 };
 
 // Autofill fields

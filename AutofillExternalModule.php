@@ -283,6 +283,15 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
             }
         }
 
+        // @AUTOTAB only supports dropdown fields
+        foreach ($active_fields[$this->atTab] as $field_name => &$data) {
+            if ($data["type"] != "select") {
+                for ($i = 0; $i < $data["autofills"]; $i++) {
+                    $data[$i]["error"] = $this->tt("invalid_for_tab", $this->atTab, $field_name);
+                }
+            }
+        }
+
         $js_params = array (
             "debug" => $debug,
             "errors" => $show_errors,
