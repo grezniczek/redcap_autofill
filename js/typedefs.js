@@ -16,6 +16,8 @@
  * survey: boolean
  * fields: object
  * widgets: object
+ * nextfocus: object
+ * autotab: object
  * }}
  */
 

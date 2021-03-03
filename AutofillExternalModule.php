@@ -14,6 +14,8 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
     private $atSurvey = "@AUTOFILL-SURVEY";
     private $atFormOnSave = "@AUTOFILL-FORM-ONSAVE";
     private $atSurveyOnSave = "@AUTOFILL-SURVEY-ONSAVE";
+    private $atTab = "@AUTOTAB";
+    private $atNextFocus = "@NEXTFOCUS";
 
     private $actionTags;
 
@@ -24,6 +26,8 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
             $this->atSurvey,
             $this->atFormOnSave,
             $this->atSurveyOnSave,
+            $this->atTab,
+            $this->atNextFocus,
         );
         parent::__construct();
     }
@@ -68,8 +72,8 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
             foreach ($tag_data as $field => $param_array) {
                 $params = array ();
                 foreach ($param_array as $raw_param) {
-                    $param = json_decode($raw_param, true);
-                    if ($param == NULL) {
+                    $param = empty($raw_param) ? "" : json_decode($raw_param, true);
+                    if ($param === NULL) {
                         $raw_param = str_replace("\r", "", $raw_param);
                         $raw_param = str_replace("\n", "\\n", $raw_param);
                         $param = json_decode($raw_param);
@@ -101,6 +105,12 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
                                 case $this->atSurveyOnSave:
                                     $param = array (
                                         "groups" => explode(",", $param),
+                                    );
+                                    break;
+                                case $this->atTab:
+                                case $this->atNextFocus:
+                                    $param = array (
+                                        "target" => $param,
                                     );
                                     break;
                             }
@@ -168,6 +178,12 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
                                     $param["groups"] = array();
                                 }
                                 break;
+                            case $this->atNextFocus:
+                            case $this->atTab:
+                                if (!isset($param["target"])) {
+                                    $param["target"] = null;
+                                }
+                                break;
                         }
                     }
                     $params[] = $param;
@@ -214,7 +230,7 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
 
         // Filter the tags and configured fields to only those on the current instrument / survey page
         $fields = array(); 
-        $tags = array ( $this->atValue );
+        $tags = array ( $this->atValue, $this->atNextFocus, $this->atTab );
         // Survey
         if ($is_survey) {
             $question_by_section = $Proj->surveys[$Proj->forms[$instrument]['survey_id']]['question_by_section'];
@@ -231,6 +247,7 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
         // Filter for active fields only and count
         $active_widgets = 0;
         $active_autofills = 0;
+        $active_other = 0;
         $active_fields = array();
         foreach ($tags as $tag) {
             foreach ($fields as $field_name) {
@@ -242,11 +259,14 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
                     else if ($tag == $this->atValue) {
                         $active_autofills++;
                     }
+                    else {
+                        $active_other++;
+                    }
                 }
             }
         }
         // Anything to do? At least one widget and autofill must be present
-        if (min($active_autofills, $active_widgets) == 0) {
+        if (min($active_autofills, $active_widgets) + $active_other == 0) {
             return;
         }
 
@@ -270,8 +290,10 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
             "debug" => $debug,
             "errors" => $show_errors,
             "survey" => $is_survey,
-            "fields" => $active_fields[$this->atValue],
-            "widgets" => $active_fields[$is_survey ? $this->atSurvey : $this->atForm],
+            "fields" => $active_fields[$this->atValue] ?: array(),
+            "widgets" => $active_fields[$is_survey ? $this->atSurvey : $this->atForm] ?: array(),
+            "nextfocus" => $active_fields[$this->atNextFocus] ?: array(),
+            "autotab" => $active_fields[$this->atTab] ?: array(),
         );
 
         $this->renderJavascript($js_params);
