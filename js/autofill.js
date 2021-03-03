@@ -131,20 +131,50 @@ DE_RUB_AutofillEM.init = function() {
 DE_RUB_AutofillEM.autofill = function(groups, mode) {
     DE_RUB_AutofillEM.log('Autofilling groups', groups)
 
+    function isMDC(/** @type AutofillValue */ afv, /** @type FieldInfo */ fi) {
+        var code = $('#' + afv.field + '_MDLabel').attr('code');
+        // @ts-ignore
+        if (fi.type == 'checkbox' && window.missing_data_codes.includes(code)) {
+            var mdc = $('input[name="__chk__' + afv.field + '_RC_' + code + '"]').val();
+            return mdc == code;
+        }
+        // @ts-ignore
+        return window.missing_data_codes.includes(code);
+    }
+
     function set(/** @type AutofillValue */ afv, /** @type FieldInfo */ fi) {
         DE_RUB_AutofillEM.log((afv.overwrite ? 'Overwriting' : 'Autofilling') + ' field ' + afv.field + ' with value ' + afv.value)
         /** @type JQuery */
         var $el;
+        var current = '';
         switch (fi.type) {
-            case 'checkbox': 
+            case 'checkbox':
+                // Clear missing data when overwrite is on
+                if (afv.overwrite && isMDC(afv, fi)) {
+                    $('img[name=missingDataButton][fieldname=' + afv.field + ']').trigger('click');
+                    $('div[name=MDSetButton][code=""]').trigger('click');
+                }
+                afv.value.split(',').forEach(function(code) {
+                    code = code.trim()
+                    $el = $('input[name=__chk__' + afv.field + '_RC_' + code);
+                    if ($el.length == 1) {
+                        current = $el.val().toString()
+                        if (current.length == 0) {
+                            $('input[type=checkbox][name=__chkn__' + afv.field + '][code="' + code + '"]').trigger('click');
+                        }
+                    }
+                });
                 break;
             case 'radio':
-                // @ts-ignore
-                radioResetVal(afv.field, 'form');
-                setTimeout(function() {
-                    $el = $('input[type=radio][value="' + afv.value + '"]');
-                    $el.trigger('click');
-                }, 10)
+                current = $('input[name="' + afv.field + '"]').val().toString();
+                if (afv.overwrite || current.length == 0) {
+                    // @ts-ignore
+                    radioResetVal(afv.field, 'form');
+                    setTimeout(function() {
+                        $el = $('input[type=radio][value="' + afv.value + '"]');
+                        $el.trigger('click');
+                    }, 10)
+                }
                 break;
             case 'select':
             case 'sql':
@@ -160,8 +190,11 @@ DE_RUB_AutofillEM.autofill = function(groups, mode) {
                 }
                 break;
             case 'slider':
-                // @ts-ignore
-                setSlider(afv.field, afv.value);
+                $el = $('input[name=' + afv.field + ']');
+                if (afv.overwrite || $el.val().toString().length == 0) {
+                    // @ts-ignore
+                    setSlider(afv.field, afv.value);
+                }
                 break;
             default:
                 $el = $('input[name=' + afv.field + ']');
@@ -178,8 +211,19 @@ DE_RUB_AutofillEM.autofill = function(groups, mode) {
         DE_RUB_AutofillEM.log('Clearing field ' + afv.field)
         /** @type JQuery */
         var $el;
+        // Clear missing data code
+        if (isMDC(afv, fi)) {
+            $('img[name=missingDataButton][fieldname=' + afv.field + ']').trigger('click');
+            $('div[name=MDSetButton][code=""]').trigger('click');
+        }
         switch (fi.type) {
-            case 'checkbox': 
+            case 'checkbox':
+                $('input[name="__chkn__' + afv.field + '"]').each(function() {
+                    var code = $(this).attr('code');
+                    if ($('input[name="__chk__' + afv.field + '_RC_' + code + '"]').val() == code) {
+                        $(this).trigger('click');
+                    }
+                })
                 break;
             case 'radio':
                 // @ts-ignore

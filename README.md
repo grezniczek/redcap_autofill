@@ -1,5 +1,3 @@
-**Warning:** Work in progress. This does nothing yet, even though this README looks fancy :p
-
 # Autofill
 
 A REDCap external module providing action tags that allow filling of empty fields with default values.
@@ -58,7 +56,7 @@ Extended parameters:
 - `group`: A group name (widgets can control specific groups) - _optional_.
 - `overwrite`: Indicates whether autofill should overwrite already set field values - _optional_ (default: `false`).
 
-_*Special case:_ Checkboxes - here, autofill values need to be set in a special syntax: `coded_value[=0|1]`, i.e. specify the code and, optionally, whether it should be set to 0 or 1. Multiple values can be separated by commas. Note, `=0|1` can be omitted, in which case `1` (checked) is assumed.
+_*Special case:_ Checkboxes - here, autofill values need to be set in a special syntax: `code,other,...`, i.e. specify the code values for each checkbox that should be set to a checked state (separate multiple values with commas).
 
 ### @AUTOFILL-FORM and @AUTOFILL-SURVEY
 
@@ -104,6 +102,8 @@ Extended parameters:
 
 ### @AUTOFILL-FORM-ONSAVE and @AUTOFILL-SURVEY-ONSAVE
 
+_Not implemented yet!_
+
 Determines whether autofill should be performed after saving a form or survey. For multi-page surveys, this will only apply after the final submission, and not for each page. An additional event will be logged specifying which fields were set through autofill.
 
 Usage:
@@ -118,7 +118,6 @@ Usage:
   'groups': [ 'group' ]
 }
 ```
-
 
 ## Changelog
 
