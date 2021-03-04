@@ -1,6 +1,6 @@
 # Autofill
 
-A REDCap external module providing action tags that allow filling of empty fields with default values.
+A REDCap external module providing action tags that allow filling of empty fields with default values, as well as for controlling navigation between fields.
 
 **Feature and pull requests** (against _main_) are welcome!
 
@@ -119,8 +119,37 @@ Usage:
 }
 ```
 
+### @AUTOTAB
+
+This action tag works for fields of type _dropdown_ only. When set for a dropdown field, the focus will move to the next field (or a specified target) as soon as the value of the field changes. This may be useful when large amounts of fields have to be filled where each field has only a limited number of options, each accessible directly with a separate keystroke.
+
+Usage:
+
+```JS
+// Behaves like pressing the tab key
+@AUTOTAB
+// Moves focus to the named field
+@AUTOTAB="field"
+// Moves focus to any element on the page that is matched by 'selector'. The colon is not part of the selector.
+@AUTOTAB=":selector"
+```
+
+### @NEXTFOCUS
+
+This action tag can be used on any field. When this field loses focus, the specified field (or any element by way of a CSS selector) gets the focus. Use with care!
+
+Usage:
+
+```JS
+// Moves focus to the named field
+@NEXTFOCUS="field"
+// Moves focus to any element on the page that is matched by 'selector'. The colon is not part of the selector.
+@NEXTFOCUS=":selector"
+```
+
 ## Changelog
 
 Version | Description
 ------- | --------------------
+v1.1.0  | Added @AUTOTAB and @NEXTFOCUS
 v1.0.0  | Initial release.
