@@ -126,6 +126,9 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
                                 if (!isset($param["overwrite"])) {
                                     $param["overwrite"] = false;
                                 }
+                                if (!isset($param["clearCheckbox"])) {
+                                    $param["clearCheckbox"] = false;
+                                }
                                 break;
                             case $this->atForm:
                             case $this->atSurvey:
@@ -204,6 +207,8 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
      * @throws \Exception
      */
     function applyAutofillOnSave($project_id, $instrument, $record, $event_id, $instance, $survey_hash = null) {
+        $field_params = $this->getFieldParams();
+
 
     }
 
@@ -232,7 +237,7 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
         if ($is_survey) {
             $question_by_section = $Proj->surveys[$Proj->forms[$instrument]['survey_id']]['question_by_section'];
             $current_page = $question_by_section == "1" ? $_GET["__page__"]  : 1;
-            list ($pageFields, $totalPages) = Survey::getPageFields($instrument, $question_by_section);
+            $pageFields = Survey::getPageFields($instrument, $question_by_section)[0];
             $fields = $pageFields[$current_page];
             array_push($tags, $this->atSurvey);
         }

@@ -221,7 +221,10 @@ DE_RUB_AutofillEM.autofill = function(groups, mode) {
                     $el = $('input[name=__chk__' + afv.field + '_RC_' + code);
                     if ($el.length == 1) {
                         current = $el.val().toString()
-                        if (current.length == 0) {
+                        if (current.length == 0 && !afv.clearCheckbox) {
+                            $('input[type=checkbox][name=__chkn__' + afv.field + '][code="' + code + '"]').trigger('click');
+                        }
+                        else if (current == "1" && afv.clearCheckbox) {
                             $('input[type=checkbox][name=__chkn__' + afv.field + '][code="' + code + '"]').trigger('click');
                         }
                     }
@@ -319,7 +322,7 @@ DE_RUB_AutofillEM.autofill = function(groups, mode) {
         for (var i = 0; i < fi.autofills; i++) {
             /** @type AutofillValue */
             var afv = DE_RUB_AutofillEM.params.fields[field][i];
-            if (groups.includes(afv.group)) {
+            if (groups.includes(afv.group) || (groups.length == 0 && afv.group == '')) {
                 if (mode == 'clear') {
                     clear(afv, fi);
                 }

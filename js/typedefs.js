@@ -38,6 +38,7 @@
  * value: string
  * group: string
  * overwrite: boolean
+ * clearCheckbox: boolean
  * target: string
  * }}
  */
