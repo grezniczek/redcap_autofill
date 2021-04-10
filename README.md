@@ -44,9 +44,10 @@ Usage:
 @AUTOFILL-VALUE="code,other"
 // Extended syntax - needed to specify a group
 @AUTOFILL-VALUE={
-  'value': '5',
-  'group': 'Fives',
-  'overwrite': true|false
+  "value": "5",
+  "group": "Fives",
+  "overwrite": true|false,
+  "clearCheckbox": true|false
 }
 ```
 
@@ -55,8 +56,9 @@ Extended parameters:
 - `value`: The value* to be filled - **required**.
 - `group`: A group name (widgets can control specific groups) - _optional_.
 - `overwrite`: Indicates whether autofill should overwrite already set field values - _optional_ (default: `false`).
+- `clearCheckbox`: Indicates whether autofill should overwrite already set field values - _optional_ (default: `false`).
 
-_*Special case:_ Checkboxes - here, autofill values need to be set in a special syntax: `code,other,...`, i.e. specify the code values for each checkbox that should be set to a checked state (separate multiple values with commas).
+_*Special case:_ Checkboxes - here, autofill values need to be set in a special syntax: `code,other,...`, i.e. specify the code values for each checkbox that should be set to a checked state (separate multiple values with commas). If instead of checking, unchecking is the desired action, then the extended syntax must be used with the `clearCheckbox` option set to true (`overwrite` will always assumed to be on in this case).
 
 ### @AUTOFILL-FORM and @AUTOFILL-SURVEY
 
@@ -73,14 +75,14 @@ Usage:
 @AUTOFILL-FORM/SURVEY="group1,group2:id" // control multiple groups
 // Extended syntax
 @AUTOFILL-FORM/SURVEY={
-  'groups': [ 'group1', 'group2'],
-  'target': 'id',
-  'autofill': true|false,
-  'autofillLabel': 'Autofill',
-  'clear': true|false,
-  'clearLabel': 'Reset',
-  'clearStyle': 'background-color:red;',
-  'delimiter': ' '
+  "groups": [ "group1", "group2" ],
+  "target": "id",
+  "autofill": true|false,
+  "autofillLabel": "Autofill",
+  "clear": true|false,
+  "clearLabel": "Reset",
+  "clearStyle": "background-color:red;",
+  "delimiter": " "
 }
 ```
 
@@ -102,8 +104,6 @@ Extended parameters:
 
 ### @AUTOFILL-FORM-ONSAVE and @AUTOFILL-SURVEY-ONSAVE
 
-_Not implemented yet!_
-
 Determines whether autofill should be performed after saving a form or survey. For multi-page surveys, this will only apply after the final submission, and not for each page. An additional event will be logged specifying which fields were set through autofill.
 
 Usage:
@@ -115,7 +115,7 @@ Usage:
 @AUTOFILL-FORM/SURVEY-ONSAVE="group1,group2"
 // Extended syntax
 @AUTOFILL-FORM/SURVEY-ONSAVE={
-  'groups': [ 'group' ]
+  "groups": [ "group1", "group2" ]
 }
 ```
 
@@ -151,5 +151,6 @@ Usage:
 
 Version | Description
 ------- | --------------------
+v1.2.0  | Added option to clear checkboxes and implemented @AUTOFILL-FORM/SURVEY-ONSAVE. Fixed a bug that prevented Autofill to work without setting a group name.
 v1.1.0  | Added @AUTOTAB and @NEXTFOCUS
 v1.0.0  | Initial release.
