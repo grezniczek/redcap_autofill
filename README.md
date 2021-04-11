@@ -125,7 +125,7 @@ Usage:
 
 Determines whether autofill should be performed **before** rendering a form or survey. For multi-page surveys, this will be peformed at the initial rendering of the first survey page only. An additional event will be logged specifying which fields were set through autofill.
 
-_Note:_ Autofill will only ever be applied to when the form status is not gray (i.e. when the instrument has been saved before).
+_Note:_ This type of autofill will only ever be applied to when the form status is not gray (i.e. when the instrument has been saved before) and the form or record is not locked. Furthermore, when unlocking a locked form, on-load autofill will not apply without re-loading the form.
 
 Usage:
 
