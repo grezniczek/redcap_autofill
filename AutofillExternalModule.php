@@ -439,35 +439,61 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
             if ($currentData == null) {
                 return;
             }
-
-
-
             // Prepare save data
             $saveData = array();
-            foreach ($groupFields as $field_name => $fieldInfo) {
-                // Go through each field and determine if something should be written; if so, add to $saveData
-
-                // Beware handling of missing data in case of checkbox fields
-                // Beware date format: convert to YMD!
+            // Go through each field and determine if something should be written; if so, add to $saveData
+            foreach ($groupFields as $field_name => $fi) {
+                if ($fi["type"] == "checkbox") {
+                    // Beware handling of missing data in case of checkbox fields
+                    
+                }
+                else {
+                    if (!isset($currentData[$field_name]) || $currentData[$field_name] == "" || $fi["overwrite"]) {
+                        $value = $fi["value"];
+                        if ($fi["type"] == "text" && strpos($fi["validation"], "date") === 0) {
+                            // Beware date format: convert to YMD!
+                            switch ($fi["validation"]) {
+                                case "date_dmy":
+                                case "datetime_dmy":
+                                case "datetime_seconds_dmy":
+                                    $day = substr($value, 0, 2);
+                                    $month = substr($value, 3, 2);
+                                    $year = substr($value, 6, 4);
+                                    $rest = substr($value, 10);
+                                    $value = "{$year}-{$month}-{$day}{$rest}";
+                                    break;
+                                case "date_mdy":
+                                case "datetime_mdy":
+                                case "datetime_seconds_mdy":
+                                    $month = substr($value, 0, 2);
+                                    $day = substr($value, 3, 2);
+                                    $year = substr($value, 6, 4);
+                                    $rest = substr($value, 10);
+                                    $value = "{$year}-{$month}-{$day}{$rest}";
+                                    break;
+                            }
+                        }
+                        $saveData[$field_name] = $value;
+                    }
+                }
             }
-            // Add some logging (before the save)
-
             // When $saveData is not empty, save to the correct record/event/instance
-            $saveData = array();
-            $saveData["trigger"] = array ("1" => "0");
-
-            // Store
-            $storeData = array();
-            if ($project->isEventRepeating($event_id)) {
-                $storeData[$record]["repeat_instances"][$event_id][null][$instance] = $saveData;
+            if (count($saveData)) {
+                // Add some logging (before the save)
+                REDCap::logEvent("Performing {$on_tag} action for group '{$group}'.", "Affected fields: " . join(", ", array_keys($groupFields)) . "\nInstance: {$instance}", null, $record, $event_id, $project_id);
+                // Store
+                $storeData = array();
+                if ($project->isEventRepeating($event_id)) {
+                    $storeData[$record]["repeat_instances"][$event_id][null][$instance] = $saveData;
+                }
+                else if ($project->isFormRepeating($instrument, $event_id)) {
+                    $storeData[$record]["repeat_instances"][$event_id][$instrument][$instance] = $saveData;
+                }
+                else {
+                    $storeData[$record][$event_id] = $saveData;
+                }
+                $result = REDCap::saveData($project_id, "array", $storeData, "overwrite", "YMD");
             }
-            else if ($project->isFormRepeating($instrument, $event_id)) {
-                $storeData[$record]["repeat_instances"][$event_id][$instrument][$instance] = $saveData;
-            }
-            else {
-                $storeData[$record][$event_id] = $saveData;
-            }
-            $result = REDCap::saveData($project_id, "array", $storeData, "overwrite", "YMD");
         }
     }
 

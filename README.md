@@ -60,6 +60,8 @@ Extended parameters:
 
 _*Special case:_ Checkboxes - here, autofill values need to be set in a special syntax: `code,other,...`, i.e. specify the code values for each checkbox that should be set to a checked state (separate multiple values with commas). If instead of checking, unchecking is the desired action, then the extended syntax must be used with the `clearCheckbox` option set to true (`overwrite` will always assumed to be on in this case).
 
+_Note:_ Values for date and datetime fields **must always** be written in the format specified for the field type! Furthermore, dates must always be written with exactly four digits for the year and exactly two digits for month and day. Year, month, and day must be separated by dashes.
+
 ### @AUTOFILL-FORM and @AUTOFILL-SURVEY
 
 Defines the placement of the autofill widget (i.e. a control with buttons for the user to click in order to initiate the autofill process).
