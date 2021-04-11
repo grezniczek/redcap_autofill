@@ -104,7 +104,9 @@ Extended parameters:
 
 ### @AUTOFILL-FORM-ONSAVE and @AUTOFILL-SURVEY-ONSAVE
 
-Determines whether autofill should be performed after saving a form or survey. For multi-page surveys, this will only apply after the final submission, and not for each page. An additional event will be logged specifying which fields were set through autofill.
+Determines whether autofill should be performed **after** saving a form or survey. For multi-page surveys, this will only apply after the final submission, and not for each page. An additional event will be logged specifying which fields were set through autofill.
+
+_Note:_ Autofill gets applied **before** alerts are triggered!
 
 Usage:
 
@@ -115,6 +117,25 @@ Usage:
 @AUTOFILL-FORM/SURVEY-ONSAVE="group1,group2"
 // Extended syntax
 @AUTOFILL-FORM/SURVEY-ONSAVE={
+  "groups": [ "group1", "group2" ]
+}
+```
+
+### @AUTOFILL-FORM-ONLOAD and @AUTOFILL-SURVEY-ONLOAD
+
+Determines whether autofill should be performed **before** rendering a form or survey. For multi-page surveys, this will be peformed at the initial rendering of the first survey page only. An additional event will be logged specifying which fields were set through autofill.
+
+_Note:_ Autofill will only ever be applied to when the form status is not gray (i.e. when the instrument has been saved before).
+
+Usage:
+
+```JS
+// Place anywhere in the instrument
+@AUTOFILL-FORM/SURVEY-ONLOAD
+// Only apply to specific groups
+@AUTOFILL-FORM/SURVEY-ONLOAD="group1,group2"
+// Extended syntax
+@AUTOFILL-FORM/SURVEY-ONLOAD={
   "groups": [ "group1", "group2" ]
 }
 ```
@@ -151,6 +172,6 @@ Usage:
 
 Version | Description
 ------- | --------------------
-v1.2.0  | Added option to clear checkboxes and implemented @AUTOFILL-FORM/SURVEY-ONSAVE. Fixed a bug that prevented Autofill to work without setting a group name.
+v1.2.0  | Added option to clear checkboxes and implemented @AUTOFILL-FORM/SURVEY-ONSAVE and added @AUTOFILL-FORM/SURVEY-ONLOAD. Fixed a bug that prevented Autofill to work without setting a group name.
 v1.1.0  | Added @AUTOTAB and @NEXTFOCUS
 v1.0.0  | Initial release.

@@ -16,7 +16,9 @@
     "framework-version": 3,
     "permissions": [
         "redcap_data_entry_form",
+        "redcap_data_entry_form_top",
         "redcap_survey_page",
+        "redcap_survey_page_top",
         "redcap_save_record",
         "redcap_survey_complete"
     ],

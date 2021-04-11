@@ -10,7 +10,9 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
     private $atForm = "@AUTOFILL-FORM";
     private $atSurvey = "@AUTOFILL-SURVEY";
     private $atFormOnSave = "@AUTOFILL-FORM-ONSAVE";
+    private $atFormOnLoad = "@AUTOFILL-FORM-ONLOAD";
     private $atSurveyOnSave = "@AUTOFILL-SURVEY-ONSAVE";
+    private $atSurveyOnLoad = "@AUTOFILL-SURVEY-ONLOAD";
     private $atTab = "@AUTOTAB";
     private $atNextFocus = "@NEXTFOCUS";
 
@@ -22,7 +24,9 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
             $this->atForm,
             $this->atSurvey,
             $this->atFormOnSave,
+            $this->atFormOnLoad,
             $this->atSurveyOnSave,
+            $this->atSurveyOnLoad,
             $this->atTab,
             $this->atNextFocus,
         );
@@ -33,6 +37,10 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
 
     function redcap_data_entry_form ($project_id, $record = NULL, $instrument, $event_id, $group_id = NULL, $repeat_instance = 1) {
         $this->renderAutofill($project_id, $instrument, $record, $event_id, $repeat_instance, NULL);
+    }
+
+    function redcap_data_entry_form_top ($project_id, $record = NULL, $instrument, $event_id, $group_id = NULL, $repeat_instance = 1) {
+        $this->applyAutofillOnLoad($project_id, $instrument, $record, $event_id, $repeat_instance, NULL);
     }
 
     function redcap_survey_page ($project_id, $record = NULL, $instrument, $event_id, $group_id = NULL, $survey_hash, $response_id = NULL, $repeat_instance = 1) {
@@ -99,7 +107,9 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
                                     );
                                     break;
                                 case $this->atFormOnSave:
+                                case $this->atFormOnLoad:
                                 case $this->atSurveyOnSave:
+                                case $this->atSurveyOnLoad:
                                     $param = array (
                                         "groups" => explode(",", $param),
                                     );
@@ -196,8 +206,7 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
 
 
     /**
-     * This function passess along details about existing uploaded files so they can be previewed immediately after the
-     * page is rendered or displayed when piped with the @IMAGEPIPE action-tag
+     * Applies AUTOFILL after saving a form/survey
      * @param $project_id
      * @param $instrument
      * @param $record
@@ -208,6 +217,176 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
      */
     function applyAutofillOnSave($project_id, $instrument, $record, $event_id, $instance, $survey_hash = null) {
         $field_params = $this->getFieldParams();
+        $fields = REDCap::getFieldNames($instrument);
+        $saveTag = $survey_hash == null ? $this->atFormOnSave : $this->atSurveyOnSave;
+        $tags = array($saveTag, $this->atValue);
+        // Filter for active fields only and count
+        $active_onsaves = 0;
+        $active_autofills = 0;
+        $active_fields = array();
+        foreach ($tags as $tag) {
+            foreach ($fields as $field_name) {
+                if (isset($field_params[$tag][$field_name])) {
+                    $active_fields[$tag][$field_name] = $field_params[$tag][$field_name];
+                    if ($tag == $saveTag) {
+                        $active_onsaves++;
+                    }
+                    else if ($tag == $this->atValue) {
+                        $active_autofills++;
+                    }
+                }
+            }
+        }
+        // Anything to do? At least one on-save and autofill must be present
+        if (min($active_autofills, $active_onsaves) == 0) {
+            return;
+        }
+        // Get some additional info
+        if (!class_exists("\DE\RUB\AutofillExternalModule\Project")) include_once ("classes/Project.php");
+        $project = new Project($this->framework, $project_id);
+        foreach ($active_fields[$this->atValue] as $field_name => &$data) {
+            $fmd = $project->getFieldMetadata($field_name);
+            $data["autofills"] = count($data);
+            $data["type"] = $fmd["element_type"];
+            $data["validation"] = $fmd["element_validation_type"];
+        }
+        // Get all on-save groups
+        $groups = array();
+        foreach ($active_fields[$saveTag] as $fos) {
+            foreach ($fos as $params) {
+                foreach ($params["groups"] as $group) {
+                    array_push($groups, $group);
+                }
+            }
+        }
+        $groups = array_unique($groups);
+        // Work through all on-save groups in order
+        foreach ($groups as $group) {
+            // Gather all fields in the group
+            $groupFields = array();
+            foreach ($active_fields[$this->atValue] as $field_name => $vf) {
+                for ($i = 0; $i < $vf["autofills"]; $i++) {
+                    if ($vf[$i]["group"] == $group) {
+                        $groupFields[$field_name] = $vf[$i];
+                        $groupFields[$field_name]["type"] = $vf["type"];
+                        $groupFields[$field_name]["validation"] = $vf["validation"];
+                    }
+                }
+            }
+            // Get the stored data
+            $currentData = REDCap::getData($project_id, "array", $record, array_keys($groupFields), $event_id);
+            // TODO: Extract data based on repeating info
+            
+            // Prepare save data
+            $saveData = array();
+            foreach ($groupFields as $field_name => $fieldInfo) {
+                // Go through each field and determine if something should be written; if so, add to $saveData
+
+                // Beware handling of missing data in case of checkbox fields
+            }
+            // Add some logging (before the save)
+
+            // When $saveData is not empty, save to the correct record/event/instance
+            $saveData = array();
+            $saveData["trigger"] = array ("1" => "0");
+            $saveDataFormatted = array();
+            $saveDataFormatted[$record][$event_id] = $saveData;
+
+            // $result = REDCap::saveData($project_id, "array", $saveDataFormatted, "overwrite", "YMD");
+        }
+
+
+    }
+
+    /**
+     * Applies AUTOFILL before rendering a data entry form or survey
+     * @param $project_id
+     * @param $instrument
+     * @param $record
+     * @param $event_id
+     * @param $instance
+     * @param @survey_hash
+     * @throws \Exception
+     */
+    function applyAutofillOnLoad($project_id, $instrument, $record, $event_id, $instance, $survey_hash = null) {
+        $field_params = $this->getFieldParams();
+        $fields = REDCap::getFieldNames($instrument);
+        $loadTag = $survey_hash == null ? $this->atFormOnLoad : $this->atSurveyOnLoad;
+        $tags = array($loadTag, $this->atValue);
+        // Filter for active fields only and count
+        $active_onloads = 0;
+        $active_autofills = 0;
+        $active_fields = array();
+        foreach ($tags as $tag) {
+            foreach ($fields as $field_name) {
+                if (isset($field_params[$tag][$field_name])) {
+                    $active_fields[$tag][$field_name] = $field_params[$tag][$field_name];
+                    if ($tag == $loadTag) {
+                        $active_onloads++;
+                    }
+                    else if ($tag == $this->atValue) {
+                        $active_autofills++;
+                    }
+                }
+            }
+        }
+        // Anything to do? At least one on-load and autofilled field must be present
+        if (min($active_autofills, $active_onloads) == 0) {
+            return;
+        }
+        // Get some additional info
+        if (!class_exists("\DE\RUB\AutofillExternalModule\Project")) include_once ("classes/Project.php");
+        $project = new Project($this->framework, $project_id);
+        foreach ($active_fields[$this->atValue] as $field_name => &$data) {
+            $fmd = $project->getFieldMetadata($field_name);
+            $data["autofills"] = count($data);
+            $data["type"] = $fmd["element_type"];
+            $data["validation"] = $fmd["element_validation_type"];
+        }
+        // Get all on-load groups
+        $groups = array();
+        foreach ($active_fields[$loadTag] as $fos) {
+            foreach ($fos as $params) {
+                foreach ($params["groups"] as $group) {
+                    array_push($groups, $group);
+                }
+            }
+        }
+        $groups = array_unique($groups);
+        // Work through all on-save groups in order
+        foreach ($groups as $group) {
+            // Gather all fields in the group
+            $groupFields = array();
+            foreach ($active_fields[$this->atValue] as $field_name => $vf) {
+                for ($i = 0; $i < $vf["autofills"]; $i++) {
+                    if ($vf[$i]["group"] == $group) {
+                        $groupFields[$field_name] = $vf[$i];
+                        $groupFields[$field_name]["type"] = $vf["type"];
+                        $groupFields[$field_name]["validation"] = $vf["validation"];
+                    }
+                }
+            }
+            // Get the stored data
+            $currentData = REDCap::getData($project_id, "array", $record, array_keys($groupFields), $event_id);
+            // TODO: Extract data based on repeating info
+            
+            // Prepare save data
+            $saveData = array();
+            foreach ($groupFields as $field_name => $fieldInfo) {
+                // Go through each field and determine if something should be written; if so, add to $saveData
+
+                // Beware handling of missing data in case of checkbox fields
+            }
+            // Add some logging (before the save)
+
+            // When $saveData is not empty, save to the correct record/event/instance
+            $saveData = array();
+            $saveData["trigger"] = array ("1" => "0");
+            $saveDataFormatted = array();
+            $saveDataFormatted[$record][$event_id] = $saveData;
+
+            $result = REDCap::saveData($project_id, "array", $saveDataFormatted, "overwrite", "YMD");
+        }
 
 
     }
