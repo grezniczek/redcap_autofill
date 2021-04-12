@@ -112,6 +112,15 @@ class Project
         return $this->getProject()->numArms;
     }
 
+    public function getArmIdByEventId($event_id) {
+        return $this->proj->eventInfo[$event_id]["arm_id"];
+    }
+    
+    public function getArmNumByEventId($event_id) {
+        return $this->proj->eventInfo[$event_id]["arm_num"];
+    }
+    
+
     /**
      * Indicates whether the project has multiple arms.
      * @return boolean
