@@ -49,8 +49,7 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
 
     function redcap_survey_page_top ($project_id, $record = NULL, $instrument, $event_id, $group_id = NULL, $survey_hash, $response_id = NULL, $repeat_instance = 1) {
         // Only for first page of a survey!
-        // TODO
-        if (false) {
+        if ($_GET["__page__"] == 1) {
             $this->applyAutofillOnLoad($project_id, $instrument, $record, $event_id, $repeat_instance, $survey_hash);
         }
     }
