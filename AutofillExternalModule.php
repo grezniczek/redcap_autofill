@@ -394,13 +394,14 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
                 }
             }
         }
-        // Anything to do? At least one on-load/on-save and autofilled field must be present
-        if (min($active_autofills, $active_on) == 0) {
-            return;
-        }
         // Get some additional info
         if (!class_exists("\DE\RUB\AutofillExternalModule\Project")) include_once ("classes/Project.php");
         $project = Project::get($this->framework, $project_id);
+        $formStatusGray = empty(\Records::getFormStatus($project_id, array ( $record ), $project->getArmIdByEventId($event_id))[$record][$event_id][$instrument]);
+        // Anything to do? At least one on-load/on-save and autofilled field must be present
+        if ($formStatusGray || min($active_autofills, $active_on) == 0) {
+            return;
+        }
         foreach ($active_fields[$this->atValue] as $field_name => &$data) {
             $fmd = $project->getFieldMetadata($field_name);
             $data["autofills"] = count($data);
