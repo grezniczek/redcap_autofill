@@ -39,12 +39,20 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
         $this->renderAutofill($project_id, $instrument, $record, $event_id, $repeat_instance, NULL);
     }
 
+    function redcap_survey_page ($project_id, $record = NULL, $instrument, $event_id, $group_id = NULL, $survey_hash, $response_id = NULL, $repeat_instance = 1) {
+        $this->renderAutofill($project_id, $instrument, $record, $event_id, $repeat_instance, $survey_hash);
+    }
+    
     function redcap_data_entry_form_top ($project_id, $record = NULL, $instrument, $event_id, $group_id = NULL, $repeat_instance = 1) {
         $this->applyAutofillOnLoad($project_id, $instrument, $record, $event_id, $repeat_instance, NULL);
     }
 
-    function redcap_survey_page ($project_id, $record = NULL, $instrument, $event_id, $group_id = NULL, $survey_hash, $response_id = NULL, $repeat_instance = 1) {
-        $this->renderAutofill($project_id, $instrument, $record, $event_id, $repeat_instance, $survey_hash);
+    function redcap_survey_page_top ($project_id, $record = NULL, $instrument, $event_id, $group_id = NULL, $survey_hash, $response_id = NULL, $repeat_instance = 1) {
+        // Only for first page of a survey!
+        // TODO
+        if (false) {
+            $this->applyAutofillOnLoad($project_id, $instrument, $record, $event_id, $repeat_instance, $survey_hash);
+        }
     }
 
     function redcap_save_record ($project_id, $record = NULL, $instrument, $event_id, $group_id = NULL, $survey_hash = NULL, $response_id = NULL, $repeat_instance = 1) {
@@ -136,8 +144,8 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
                                 if (!isset($param["overwrite"])) {
                                     $param["overwrite"] = false;
                                 }
-                                if (!isset($param["clearCheckbox"])) {
-                                    $param["clearCheckbox"] = false;
+                                if (!isset($param["clear"])) {
+                                    $param["clear"] = NULL;
                                 }
                                 break;
                             case $this->atForm:
@@ -267,7 +275,7 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
 
         // Assemble information needed to pass to JavaScript for rendering
         if (!class_exists("\DE\RUB\AutofillExternalModule\Project")) include_once ("classes/Project.php");
-        $project = new Project($this->framework, $project_id);
+        $project = Project::get($this->framework, $project_id);
         $debug = $this->getProjectSetting("javascript-debug") == true;
         $show_errors = $this->getProjectSetting("show-errors") == true;
 
@@ -393,7 +401,7 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
         }
         // Get some additional info
         if (!class_exists("\DE\RUB\AutofillExternalModule\Project")) include_once ("classes/Project.php");
-        $project = new Project($this->framework, $project_id);
+        $project = Project::get($this->framework, $project_id);
         foreach ($active_fields[$this->atValue] as $field_name => &$data) {
             $fmd = $project->getFieldMetadata($field_name);
             $data["autofills"] = count($data);
@@ -444,8 +452,43 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
             // Go through each field and determine if something should be written; if so, add to $saveData
             foreach ($groupFields as $field_name => $fi) {
                 if ($fi["type"] == "checkbox") {
-                    // Beware handling of missing data in case of checkbox fields
-                    
+                    $changed = false;
+                    // Copy current values
+                    $value = array();
+                    foreach ($currentData[$field_name] as $chkCode => $chkValue) {
+                        $value[$chkCode] = $chkValue;
+                        $new[$chkCode] = $chkValue;
+                    }
+                    // What to do?
+                    $options_to_set = explode(",", $fi["value"]);
+                    $options_to_clear = explode(",", $fi["clear"]);
+                    // Set
+                    foreach ($options_to_set as $option) {
+                        if ($option == "") continue;
+                        if (!isset($value[$option]) || $value[$option] == "0") {
+                            $value[$option] = "1";
+                            $changed = true;
+                        }
+                    }
+                    // Clear
+                    foreach ($options_to_clear as $option) {
+                        if ($option == "") continue;
+                        if (!isset($value[$option]) || $value[$option] == "1") {
+                            $value[$option] = "0";
+                            $changed = true;
+                        }
+                    }
+                    // In any case, clear missing data codes
+                    $missing_codes = $project->getMissingDataCodes();
+                    foreach ($missing_codes as $mdc => $_) {
+                        if (isset($value[$mdc]) && $value[$mdc] == "1") {
+                            $value[$mdc] = "0";
+                            $changed = true;
+                        }
+                    }
+                    if ($changed) {
+                        $saveData[$field_name] = $value;
+                    }
                 }
                 else {
                     if (!isset($currentData[$field_name]) || $currentData[$field_name] == "" || $fi["overwrite"]) {
@@ -473,7 +516,10 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
                                     break;
                             }
                         }
-                        $saveData[$field_name] = $value;
+                        // Only add if the value has changed
+                        if ($value != $currentData[$field_name]) {
+                            $saveData[$field_name] = $value;
+                        }
                     }
                 }
             }

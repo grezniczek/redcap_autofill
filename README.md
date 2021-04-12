@@ -44,21 +44,21 @@ Usage:
 @AUTOFILL-VALUE="code,other"
 // Extended syntax - needed to specify a group
 @AUTOFILL-VALUE={
-  "value": "5",
+  "value": "5", 
+  "clear": "2", // only for checkbox fields!
   "group": "Fives",
-  "overwrite": true|false,
-  "clearCheckbox": true|false
+  "overwrite": true|false
 }
 ```
 
 Extended parameters:
 
 - `value`: The value* to be filled - **required**.
+- `clear`: **Checkbox fields only**. The list of checkbox options* that should be unchecked - _optional_.
 - `group`: A group name (widgets can control specific groups) - _optional_.
 - `overwrite`: Indicates whether autofill should overwrite already set field values - _optional_ (default: `false`).
-- `clearCheckbox`: Indicates whether autofill should overwrite already set field values - _optional_ (default: `false`).
 
-_*Special case:_ Checkboxes - here, autofill values need to be set in a special syntax: `code,other,...`, i.e. specify the code values for each checkbox that should be set to a checked state (separate multiple values with commas). If instead of checking, unchecking is the desired action, then the extended syntax must be used with the `clearCheckbox` option set to true (`overwrite` will always assumed to be on in this case).
+_*Special case:_ Checkboxes - here, autofill values need to be set in a special syntax: `code,other,...`, i.e. specify the code values for each checkbox that should be set to a checked state (separate multiple values with commas). If instead of checking, unchecking is the desired action, then the extended syntax must be used with the `clear` option instead of `value`, giving the codes of the checkboxes to be cleared. When `clear` is used, it will take precedence over `value` and `clear` will always overwrite saved values (i.e. as if `overwrite` was set to `true`). `value` and `clear` can be used at the same time. The `overwrite` option has no function in case of checkbox fields.
 
 _Note:_ Values for date and datetime fields **must always** be written in the format specified for the field type! Furthermore, dates must always be written with exactly four digits for the year and exactly two digits for month and day. Year, month, and day must be separated by dashes.
 
