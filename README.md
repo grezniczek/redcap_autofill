@@ -127,7 +127,7 @@ Usage:
 
 Determines whether autofill should be performed **before** rendering a form or survey. For multi-page surveys, this will be peformed at the initial rendering of the first survey page only. An additional event will be logged specifying which fields were set through autofill.
 
-_Note:_ This type of autofill will only ever be applied to when the form status is not gray (i.e. when the instrument has been saved before) and the form or record is not locked. Furthermore, when unlocking a locked form, on-load autofill will not apply without re-loading the form.
+_Note:_ This type of autofill will only ever be applied to when the form status is not gray (i.e. when the instrument has been saved before) and the form or record is not locked. Furthermore, when unlocking a locked form, on-load autofill will not apply without re-loading the form. If you want to set a value for a freshly loaded form, use `@DEFAULT`.
 
 Usage:
 
@@ -174,6 +174,6 @@ Usage:
 
 Version | Description
 ------- | --------------------
-v1.2.0  | Added option to clear checkboxes and implemented @AUTOFILL-FORM/SURVEY-ONSAVE and added @AUTOFILL-FORM/SURVEY-ONLOAD. Fixed a bug that prevented Autofill to work without setting a group name.
+v1.2.0  | Added option to clear checkboxes and implemented @AUTOFILL-FORM/SURVEY-ONSAVE and added @AUTOFILL-FORM/SURVEY-ONLOAD.<br> Fixed a bug that prevented Autofill to work without setting a group name.
 v1.1.0  | Added @AUTOTAB and @NEXTFOCUS
 v1.0.0  | Initial release.
