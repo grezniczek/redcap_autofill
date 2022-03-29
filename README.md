@@ -174,6 +174,7 @@ Usage:
 
 Version | Description
 ------- | --------------------
+v1.2.1  | Bugfix: Autotab failed in newer REDCap versions
 v1.2.0  | Added option to clear checkboxes and implemented @AUTOFILL-FORM/SURVEY-ONSAVE and added @AUTOFILL-FORM/SURVEY-ONLOAD.<br> Fixed a bug that prevented Autofill to work without setting a group name.
 v1.1.0  | Added @AUTOTAB and @NEXTFOCUS
 v1.0.0  | Initial release.

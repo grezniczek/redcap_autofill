@@ -150,7 +150,9 @@ DE_RUB_AutofillEM.init = function() {
                                 focusTo = els[i];
                                 break;
                             }
-                            next = els[i].getAttribute('aria-labelledby') == ('label-' + field);
+                            let name = els[i].getAttribute('aria-labelledby')
+                            if (!name) name = 'label-' + els[i].getAttribute('name') // Fallback
+                            next = name == ('label-' + field);
                         }
                     }
                     else if (target.startsWith(':')) {
