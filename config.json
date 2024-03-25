@@ -13,15 +13,7 @@
             "institution": "Ruhr-Universität Bochum"
         }
     ],
-    "framework-version": 8,
-    "permissions": [
-        "redcap_data_entry_form",
-        "redcap_data_entry_form_top",
-        "redcap_survey_page",
-        "redcap_survey_page_top",
-        "redcap_save_record",
-        "redcap_survey_complete"
-    ],
+    "framework-version": 12,
     "system-settings": [
     ],
     "project-settings": [
@@ -38,10 +30,51 @@
             "type": "checkbox"
         }
     ],
-    "compatibility": {
-        "php-version-min": "5.6.0",
-        "php-version-max": "",
-        "redcap-version-min": "10.1.0",
-        "redcap-version-max": ""
-     }
+    "action-tags": [
+        {
+            "tag": "@AUTOFILL-VALUE",
+            "description": "See English.ini",
+            "tt_description": "atdesc_autofill_value"
+        },
+        {
+            "tag": "@AUTOFILL-FORM",
+            "description": "See English.ini",
+            "tt_description": "atdesc_autofill_form"
+        },
+        {
+            "tag": "@AUTOFILL-SURVEY",
+            "description": "See English.ini",
+            "tt_description": "atdesc_autofill_survey"
+        },
+        {
+            "tag": "@AUTOFILL-FORM-ONSAVE",
+            "description": "See English.ini",
+            "tt_description": "atdesc_autofill_form_onsave"
+        },
+        {
+            "tag": "@AUTOFILL-SURVEY-ONSAVE",
+            "description": "See English.ini",
+            "tt_description": "atdesc_autofill_survey_onsave"
+        },
+        {
+            "tag": "@AUTOFILL-FORM-ONLOAD",
+            "description": "See English.ini",
+            "tt_description": "atdesc_autofill_form_onload"
+        },
+        {
+            "tag": "@AUTOFILL-SURVEY-ONLOAD",
+            "description": "See English.ini",
+            "tt_description": "atdesc_autofill_survey_onload"
+        },
+        {
+            "tag": "@AUTOTAB",
+            "description": "See English.ini",
+            "tt_description": "atdesc_autotab"
+        },
+        {
+            "tag": "@NEXTFOCUS",
+            "description": "See English.ini",
+            "tt_description": "atdesc_nextfocus"
+        }
+    ]
 }

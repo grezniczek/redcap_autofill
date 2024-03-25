@@ -144,7 +144,7 @@ Usage:
 
 ### @AUTOTAB
 
-This action tag works for fields of type _dropdown_ only. When set for a dropdown field, the focus will move to the next field (or a specified target) as soon as the value of the field changes. This may be useful when large amounts of fields have to be filled where each field has only a limited number of options, each accessible directly with a separate keystroke.
+This action tag works for fields of type _dropdown_ only. When set for a dropdown field, the focus will move to the next field (or a specified target) as soon as the value of the field changes. This may be useful when large amounts of fields have to be filled where each field has only a limited number of options, each accessible directly with a distinct keystroke.
 
 Usage:
 
@@ -174,7 +174,8 @@ Usage:
 
 Version | Description
 ------- | --------------------
-v1.2.1  | Bugfix: Autotab failed in newer REDCap versions
-v1.2.0  | Added option to clear checkboxes and implemented @AUTOFILL-FORM/SURVEY-ONSAVE and added @AUTOFILL-FORM/SURVEY-ONLOAD.<br> Fixed a bug that prevented Autofill to work without setting a group name.
+v1.3.0  | Added action tag descriptions.<br>Bugfix: Yes/No and True/False fields failed to be set.
+v1.2.1  | Bugfix: Autotab failed in newer REDCap versions.
+v1.2.0  | Added option to clear checkboxes and implemented @AUTOFILL-FORM/SURVEY-ONSAVE and added @AUTOFILL-FORM/SURVEY-ONLOAD.<br>Fixed a bug that prevented Autofill to work without setting a group name.
 v1.1.0  | Added @AUTOTAB and @NEXTFOCUS
 v1.0.0  | Initial release.
