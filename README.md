@@ -174,6 +174,7 @@ Usage:
 
 Version | Description
 ------- | --------------------
+v1.3.1  | Bugfix: Clearing Yes/No and True/False fields failed to work properly.
 v1.3.0  | Added action tag descriptions.<br>Bugfix: Yes/No and True/False fields failed to be set.
 v1.2.1  | Bugfix: Autotab failed in newer REDCap versions.
 v1.2.0  | Added option to clear checkboxes and implemented @AUTOFILL-FORM/SURVEY-ONSAVE and added @AUTOFILL-FORM/SURVEY-ONLOAD.<br>Fixed a bug that prevented Autofill to work without setting a group name.

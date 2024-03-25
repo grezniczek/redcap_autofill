@@ -277,6 +277,7 @@ DE_RUB_AutofillEM.autofill = function(groups, mode) {
     }
     
     function clear(/** @type AutofillValue */ afv, /** @type FieldInfo */ fi) {
+        justClickedEnhancedChoice = false; // !?? Some weird stuff happens if we don't do this
         DE_RUB_AutofillEM.log('Clearing field ' + afv.field)
         /** @type JQuery */
         var $el;
@@ -295,6 +296,8 @@ DE_RUB_AutofillEM.autofill = function(groups, mode) {
                 })
                 break;
             case 'radio':
+            case 'yesno':
+            case 'truefalse':
                 // @ts-ignore
                 radioResetVal(afv.field, 'form');
                 break;
