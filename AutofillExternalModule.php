@@ -6,32 +6,17 @@ use \Survey as Survey;
 class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
 
 
-    private $atValue = "@AUTOFILL-VALUE";
-    private $atForm = "@AUTOFILL-FORM";
-    private $atSurvey = "@AUTOFILL-SURVEY";
-    private $atFormOnSave = "@AUTOFILL-FORM-ONSAVE";
-    private $atFormOnLoad = "@AUTOFILL-FORM-ONLOAD";
-    private $atSurveyOnSave = "@AUTOFILL-SURVEY-ONSAVE";
-    private $atSurveyOnLoad = "@AUTOFILL-SURVEY-ONLOAD";
-    private $atTab = "@AUTOTAB";
-    private $atNextFocus = "@NEXTFOCUS";
-
-    private $actionTags;
-
-    function __construct() {
-        $this->actionTags = array (
-            $this->atValue,
-            $this->atForm,
-            $this->atSurvey,
-            $this->atFormOnSave,
-            $this->atFormOnLoad,
-            $this->atSurveyOnSave,
-            $this->atSurveyOnLoad,
-            $this->atTab,
-            $this->atNextFocus,
-        );
-        parent::__construct();
-    }
+    private $actionTags = [
+        "atValue" => "@AUTOFILL-VALUE",
+        "atForm" => "@AUTOFILL-FORM",
+        "atSurvey" => "@AUTOFILL-SURVEY",
+        "atFormOnSave" => "@AUTOFILL-FORM-ONSAVE",
+        "atFormOnLoad" => "@AUTOFILL-FORM-ONLOAD",
+        "atSurveyOnSave" => "@AUTOFILL-SURVEY-ONSAVE",
+        "atSurveyOnLoad" => "@AUTOFILL-SURVEY-ONLOAD",
+        "atTab" => "@AUTOTAB",
+        "atNextFocus" => "@NEXTFOCUS",
+    ];
 
     #region Hooks
 
@@ -79,7 +64,7 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
         if (!class_exists("ActionTagHelper")) include_once("classes/ActionTagHelper.php");
 
         $field_params = array();
-        $action_tag_results = ActionTagHelper::getActionTags($this->actionTags);
+        $action_tag_results = ActionTagHelper::getActionTags(array_values($this->actionTags));
         foreach ($action_tag_results as $tag => $tag_data) {
             foreach ($tag_data as $field => $param_array) {
                 $params = array ();
@@ -100,29 +85,29 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
                         // Convert non-json parameters to corresponding array
                         if (!is_array($param)) {
                             switch($tag) {
-                                case $this->atValue:
+                                case $this->actionTags["atValue"]:
                                     $param = array (
                                         "value" => $param,
                                     );
                                     break;
-                                case $this->atForm:
-                                case $this->atSurvey:
+                                case $this->actionTags["atForm"]:
+                                case $this->actionTags["atSurvey"]:
                                     list($groups, $id) = explode(":", $param, 2);
                                     $param = array (
                                         "groups" => explode(",", $groups),
                                         "target" => $id,
                                     );
                                     break;
-                                case $this->atFormOnSave:
-                                case $this->atFormOnLoad:
-                                case $this->atSurveyOnSave:
-                                case $this->atSurveyOnLoad:
+                                case $this->actionTags["atFormOnSave"]:
+                                case $this->actionTags["atFormOnLoad"]:
+                                case $this->actionTags["atSurveyOnSave"]:
+                                case $this->actionTags["atSurveyOnLoad"]:
                                     $param = array (
                                         "groups" => explode(",", $param),
                                     );
                                     break;
-                                case $this->atTab:
-                                case $this->atNextFocus:
+                                case $this->actionTags["atTab"]:
+                                case $this->actionTags["atNextFocus"]:
                                     $param = array (
                                         "target" => $param,
                                     );
@@ -133,7 +118,7 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
                         $param["field"] = $field;
                         $param["error"] = "";
                         switch($tag) {
-                            case $this->atValue:
+                            case $this->actionTags["atValue"]:
                                 if (!isset($param["value"])) {
                                     $param["value"] = NULL;
                                 }
@@ -147,8 +132,8 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
                                     $param["clear"] = NULL;
                                 }
                                 break;
-                            case $this->atForm:
-                            case $this->atSurvey:
+                            case $this->actionTags["atForm"]:
+                            case $this->actionTags["atSurvey"]:
                                 if (!isset($param["groups"])) {
                                     $param["groups"] = array();
                                 }
@@ -189,14 +174,14 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
                                     $param["after"] = " ";
                                 }
                                 break;
-                            case $this->atFormOnSave:
-                            case $this->atSurveyOnSave:
+                            case $this->actionTags["atFormOnSave"]:
+                            case $this->actionTags["atSurveyOnSave"]:
                                 if (!isset($param["groups"])) {
                                     $param["groups"] = array();
                                 }
                                 break;
-                            case $this->atNextFocus:
-                            case $this->atTab:
+                            case $this->actionTags["atNextFocus"]:
+                            case $this->actionTags["atTab"]:
                                 if (!isset($param["target"])) {
                                     $param["target"] = null;
                                 }
@@ -232,19 +217,23 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
 
         // Filter the tags and configured fields to only those on the current instrument / survey page
         $fields = array(); 
-        $tags = array ( $this->atValue, $this->atNextFocus, $this->atTab );
+        $tags = array ( 
+            $this->actionTags["atValue"], 
+            $this->actionTags["atNextFocus"], 
+            $this->actionTags["atTab"] 
+        );
         // Survey
         if ($is_survey) {
             $question_by_section = $Proj->surveys[$Proj->forms[$instrument]['survey_id']]['question_by_section'];
             $current_page = $question_by_section == "1" ? $_GET["__page__"]  : 1;
             $pageFields = Survey::getPageFields($instrument, $question_by_section)[0];
             $fields = $pageFields[$current_page];
-            array_push($tags, $this->atSurvey);
+            array_push($tags, $this->actionTags["atSurvey"]);
         }
         // Data entry
         else {
             $fields = REDCap::getFieldNames($instrument);
-            array_push($tags, $this->atForm);
+            array_push($tags, $this->actionTags["atForm"]);
         }
         // Filter for active fields only and count
         $active_widgets = 0;
@@ -255,10 +244,10 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
             foreach ($fields as $field_name) {
                 if (isset($field_params[$tag][$field_name])) {
                     $active_fields[$tag][$field_name] = $field_params[$tag][$field_name];
-                    if ($tag == $this->atForm || $tag == $this->atSurvey) {
+                    if ($tag == $this->actionTags["atForm"] || $tag == $this->actionTags["atSurvey"]) {
                         $active_widgets++;
                     }
-                    else if ($tag == $this->atValue) {
+                    else if ($tag == $this->actionTags["atValue"]) {
                         $active_autofills++;
                     }
                     else {
@@ -289,10 +278,10 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
         }
 
         // @AUTOTAB only supports dropdown fields
-        foreach ($active_fields[$this->atTab] as $field_name => &$data) {
+        foreach ($active_fields[$this->actionTags["atTab"]] as $field_name => &$data) {
             if ($data["type"] != "select") {
                 for ($i = 0; $i < $data["autofills"]; $i++) {
-                    $data[$i]["error"] = $this->tt("invalid_for_tab", $this->atTab, $field_name);
+                    $data[$i]["error"] = $this->tt("invalid_for_tab", $this->actionTags["atTab"], $field_name);
                 }
             }
         }
@@ -301,10 +290,10 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
             "debug" => $debug,
             "errors" => $show_errors,
             "survey" => $is_survey,
-            "fields" => $active_fields[$this->atValue] ?: array(),
-            "widgets" => $active_fields[$is_survey ? $this->atSurvey : $this->atForm] ?: array(),
-            "nextfocus" => $active_fields[$this->atNextFocus] ?: array(),
-            "autotab" => $active_fields[$this->atTab] ?: array(),
+            "fields" => $active_fields[$this->actionTags["atValue"]] ?: array(),
+            "widgets" => $active_fields[$is_survey ? $this->actionTags["atSurvey"] : $this->actionTags["atForm"]] ?: array(),
+            "nextfocus" => $active_fields[$this->actionTags["atNextFocus"]] ?: array(),
+            "autotab" => $active_fields[$this->actionTags["atTab"]] ?: array(),
         );
 
         $this->renderJavascript($js_params);
@@ -341,7 +330,7 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
      * @throws \Exception
      */
     function applyAutofillOnSave($project_id, $instrument, $record, $event_id, $instance, $survey_hash = null) {
-        $on_tag = $survey_hash == null ? $this->atFormOnSave : $this->atSurveyOnSave;
+        $on_tag = $survey_hash == null ? $this->actionTags["atFormOnSave"] : $this->actionTags["atSurveyOnSave"];
         $this->applyAutofillOnSaveOrLoad($on_tag, $project_id, $instrument, $record, $event_id, $instance, $survey_hash);
     }
 
@@ -357,7 +346,7 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
      * @throws \Exception
      */
     function applyAutofillOnLoad($project_id, $instrument, $record, $event_id, $instance, $survey_hash = null) {
-        $on_tag = $survey_hash == null ? $this->atFormOnLoad : $this->atSurveyOnLoad;
+        $on_tag = $survey_hash == null ? $this->actionTags["atFormOnLoad"] : $this->actionTags["atSurveyOnLoad"];
         $this->applyAutofillOnSaveOrLoad($on_tag, $project_id, $instrument, $record, $event_id, $instance, $survey_hash);
     }
 
@@ -376,7 +365,7 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
     function applyAutofillOnSaveOrLoad($on_tag, $project_id, $instrument, $record, $event_id, $instance, $survey_hash = null) {
         $field_params = $this->getFieldParams();
         $fields = REDCap::getFieldNames($instrument);
-        $tags = array($on_tag, $this->atValue);
+        $tags = array($on_tag, $this->actionTags["atValue"]);
         // Filter for active fields only and count on-tags
         $active_on = 0;
         $active_autofills = 0;
@@ -388,7 +377,7 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
                     if ($tag == $on_tag) {
                         $active_on++;
                     }
-                    else if ($tag == $this->atValue) {
+                    else if ($tag == $this->actionTags["atValue"]) {
                         $active_autofills++;
                     }
                 }
@@ -402,7 +391,7 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
         if ($formStatusGray || min($active_autofills, $active_on) == 0) {
             return;
         }
-        foreach ($active_fields[$this->atValue] as $field_name => &$data) {
+        foreach ($active_fields[$this->actionTags["atValue"]] as $field_name => &$data) {
             $fmd = $project->getFieldMetadata($field_name);
             $data["autofills"] = count($data);
             $data["type"] = $fmd["element_type"];
@@ -422,7 +411,7 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
         foreach ($groups as $group) {
             // Gather all fields in the group
             $groupFields = array();
-            foreach ($active_fields[$this->atValue] as $field_name => $vf) {
+            foreach ($active_fields[$this->actionTags["atValue"]] as $field_name => $vf) {
                 for ($i = 0; $i < $vf["autofills"]; $i++) {
                     if ($vf[$i]["group"] == $group) {
                         $groupFields[$field_name] = $vf[$i];
