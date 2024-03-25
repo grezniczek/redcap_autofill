@@ -233,6 +233,8 @@ DE_RUB_AutofillEM.autofill = function(groups, mode) {
                 });
                 break;
             case 'radio':
+            case 'yesno':
+            case 'truefalse':
                 current = $('input[name="' + afv.field + '"]').val().toString();
                 if (afv.overwrite || current.length == 0) {
                     // @ts-ignore
