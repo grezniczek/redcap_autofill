@@ -6,7 +6,7 @@ A REDCap external module providing action tags that allow filling of empty field
 
 ## Requirements
 
-- REDCAP 10.1.0 or newer.
+- REDCap with EM Framework v12
 
 ## Installation
 
@@ -174,6 +174,7 @@ Usage:
 
 Version | Description
 ------- | --------------------
+v1.3.2  | Bugfix: Radio-type fields were not set correctly in certain situations.
 v1.3.1  | Bugfix: Clearing Yes/No and True/False fields failed to work properly.
 v1.3.0  | Added action tag descriptions.<br>Bugfix: Yes/No and True/False fields failed to be set.
 v1.2.1  | Bugfix: Autotab failed in newer REDCap versions.

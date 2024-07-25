@@ -222,7 +222,7 @@ DE_RUB_AutofillEM.autofill = function(groups, mode) {
                     code = code.trim()
                     $el = $('input[name=__chk__' + afv.field + '_RC_' + code);
                     if ($el.length == 1) {
-                        current = $el.val().toString()
+                        current = ($el.val() ?? '').toString()
                         if (current.length == 0 && !afv.clearCheckbox) {
                             $('input[type=checkbox][name=__chkn__' + afv.field + '][code="' + code + '"]').trigger('click');
                         }
@@ -235,12 +235,12 @@ DE_RUB_AutofillEM.autofill = function(groups, mode) {
             case 'radio':
             case 'yesno':
             case 'truefalse':
-                current = $('input[name="' + afv.field + '"]').val().toString();
+                current = ($('input[name="' + afv.field + '"]').val() ?? '').toString();
                 if (afv.overwrite || current.length == 0) {
                     // @ts-ignore
                     radioResetVal(afv.field, 'form');
                     setTimeout(function() {
-                        $el = $('input[type=radio][value="' + afv.value + '"]');
+                        $el = $('input[type=radio][name="' + afv.field + '___radio"][value="' + afv.value + '"]');
                         $el.trigger('click');
                     }, 10)
                 }
@@ -248,26 +248,26 @@ DE_RUB_AutofillEM.autofill = function(groups, mode) {
             case 'select':
             case 'sql':
                 $el = $('select[name=' + afv.field + ']');
-                if (afv.overwrite || $el.val().toString().length == 0) {
+                if (afv.overwrite || ($el.val() ?? '').toString().length == 0) {
                     $el.val(afv.value);
                 }
                 break;
             case 'textarea':
                 $el = $('textarea[name=' + afv.field + ']');
-                if (afv.overwrite || $el.val().toString().length == 0) {
+                if (afv.overwrite || ($el.val() ?? '').toString().length == 0) {
                     $el.val(afv.value);
                 }
                 break;
             case 'slider':
                 $el = $('input[name=' + afv.field + ']');
-                if (afv.overwrite || $el.val().toString().length == 0) {
+                if (afv.overwrite || ($el.val() ?? '').toString().length == 0) {
                     // @ts-ignore
                     setSlider(afv.field, afv.value);
                 }
                 break;
             default:
                 $el = $('input[name=' + afv.field + ']');
-                if (afv.overwrite || $el.val().toString().length == 0) {
+                if (afv.overwrite || ($el.val() ?? '').toString().length == 0) {
                     $el.val(afv.value);
                 }
                 break;
@@ -277,6 +277,7 @@ DE_RUB_AutofillEM.autofill = function(groups, mode) {
     }
     
     function clear(/** @type AutofillValue */ afv, /** @type FieldInfo */ fi) {
+        // @ts-ignore
         justClickedEnhancedChoice = false; // !?? Some weird stuff happens if we don't do this
         DE_RUB_AutofillEM.log('Clearing field ' + afv.field)
         /** @type JQuery */

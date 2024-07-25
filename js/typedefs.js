@@ -1,7 +1,7 @@
 /**
  * @typedef AutofillEM
  * @type {{
- *  params?: AutofillParams
+ *  params: AutofillParams
  *  log: functiion()
  *  init: function()
  *  autofill: function(string[], string)
