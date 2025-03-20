@@ -250,6 +250,10 @@ DE_RUB_AutofillEM.autofill = function(groups, mode) {
                 $el = $('select[name=' + afv.field + ']');
                 if (afv.overwrite || ($el.val() ?? '').toString().length == 0) {
                     $el.val(afv.value);
+                    // Auto-complete fields need a bit of extra work
+                    if ($el.hasClass('rc-autocomplete')) {
+                        $el.parentsUntil('[data-kind="form"]').find('input.rc-autocomplete').val($el.find('option[data-mlm-value="' + afv.value + '"]').text());
+                    }
                 }
                 break;
             case 'textarea':
