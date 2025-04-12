@@ -20,33 +20,33 @@ class AutofillExternalModule extends \ExternalModules\AbstractExternalModule {
 
     #region Hooks
 
-    function redcap_data_entry_form ($project_id, $record = NULL, $instrument, $event_id, $group_id = NULL, $repeat_instance = 1) {
+    function redcap_data_entry_form ($project_id, $record, $instrument, $event_id, $group_id, $repeat_instance = 1) {
         $this->renderAutofill($project_id, $instrument, $record, $event_id, $repeat_instance, NULL);
     }
 
-    function redcap_survey_page ($project_id, $record = NULL, $instrument, $event_id, $group_id = NULL, $survey_hash, $response_id = NULL, $repeat_instance = 1) {
+    function redcap_survey_page ($project_id, $record = NULL, $instrument, $event_id, $group_id, $survey_hash, $response_id, $repeat_instance) {
         $this->renderAutofill($project_id, $instrument, $record, $event_id, $repeat_instance, $survey_hash);
     }
     
-    function redcap_data_entry_form_top ($project_id, $record = NULL, $instrument, $event_id, $group_id = NULL, $repeat_instance = 1) {
+    function redcap_data_entry_form_top ($project_id, $record, $instrument, $event_id, $group_id, $repeat_instance) {
         $this->applyAutofillOnLoad($project_id, $instrument, $record, $event_id, $repeat_instance, NULL);
     }
 
-    function redcap_survey_page_top ($project_id, $record = NULL, $instrument, $event_id, $group_id = NULL, $survey_hash, $response_id = NULL, $repeat_instance = 1) {
+    function redcap_survey_page_top ($project_id, $record, $instrument, $event_id, $group_id, $survey_hash, $response_id, $repeat_instance) {
         // Only for first page of a survey!
         if ($_GET["__page__"] == 1) {
             $this->applyAutofillOnLoad($project_id, $instrument, $record, $event_id, $repeat_instance, $survey_hash);
         }
     }
 
-    function redcap_save_record ($project_id, $record = NULL, $instrument, $event_id, $group_id = NULL, $survey_hash = NULL, $response_id = NULL, $repeat_instance = 1) {
+    function redcap_save_record ($project_id, $record, $instrument, $event_id, $group_id, $survey_hash, $response_id, $repeat_instance) {
         if ($survey_hash === NULL) {
             // Only for data entry!
             $this->applyAutofillOnSave($project_id, $instrument, $record, $event_id, $repeat_instance, NULL);
         }
     }
 
-    function redcap_survey_complete ($project_id, $record = NULL, $instrument, $event_id, $group_id = NULL, $survey_hash, $response_id = NULL, $repeat_instance = 1) {
+    function redcap_survey_complete ($project_id, $record, $instrument, $event_id, $group_id, $survey_hash, $response_id, $repeat_instance) {
         $this->applyAutofillOnSave($project_id, $instrument, $record, $event_id, $repeat_instance, $survey_hash);
     }
 

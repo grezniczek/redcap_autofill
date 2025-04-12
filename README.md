@@ -174,6 +174,7 @@ Usage:
 
 Version | Description
 ------- | --------------------
+v1.3.4  | PHP8 compatibility fixes.
 v1.3.3  | Bugfix: Dropdowns with autocomplete enabled did not show the automatically filled value.
 v1.3.2  | Bugfix: Radio-type fields were not set correctly in certain situations.
 v1.3.1  | Bugfix: Clearing Yes/No and True/False fields failed to work properly.
